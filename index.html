@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1D5BB8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script src="config.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<title>Painel SIC Demandas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+/* Layout: barra de filtros fixa no topo + resumo (números e carga por pessoa) + lista de tarefas agrupada por prazo; detalhes em painel deslizante */
+:root{
+  --bg:#EEF1F4; --surface:#FFFFFF; --surface-2:#E3E8EE; --line:#CDD5DE;
+  --ink:#16202B; --ink-2:#4A5868; --ink-3:#77869A;
+  --accent:#1D5BB8; --accent-ink:#FFFFFF; --accent-soft:#DCE7F7;
+  --ok:#1E7A4C; --ok-soft:#DDF0E5; --warn:#A86200; --warn-soft:#FBEBD2; --bad:#C0352B; --bad-soft:#F8DEDB;
+  --shadow:0 1px 2px rgba(22,32,43,.06),0 4px 14px rgba(22,32,43,.06);
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F151C; --surface:#18212B; --surface-2:#222D39; --line:#2E3B49;
+  --ink:#E7EDF3; --ink-2:#AAB7C5; --ink-3:#7D8B9B;
+  --accent:#6EA2F0; --accent-ink:#0B1420; --accent-soft:#1D3150;
+  --ok:#5CC48C; --ok-soft:#173527; --warn:#F0AE4E; --warn-soft:#3A2B14; --bad:#F07A6E; --bad-soft:#3F1F1C;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151C; --surface:#18212B; --surface-2:#222D39; --line:#2E3B49;
+  --ink:#E7EDF3; --ink-2:#AAB7C5; --ink-3:#7D8B9B;
+  --accent:#6EA2F0; --accent-ink:#0B1420; --accent-soft:#1D3150;
+  --ok:#5CC48C; --ok-soft:#173527; --warn:#F0AE4E; --warn-soft:#3A2B14; --bad:#F07A6E; --bad-soft:#3F1F1C;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* topo */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:12px 10px}
+.brand{display:flex;flex-direction:column;min-width:0;margin-right:auto}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:.01em;margin:0;line-height:1;text-wrap:balance}
+.brand small{font-family:var(--f-mono);font-size:12px;color:var(--ink-3);margin-top:3px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:14px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn svg{width:18px;height:18px;flex:none}
+
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-block:0 12px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:11px;padding:3px;gap:2px}
+.seg button{min-height:40px;padding:0 14px;border:0;border-radius:8px;background:transparent;font-weight:600;font-size:14px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.nav{display:inline-flex;align-items:center;gap:4px}
+.nav button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.nav button:disabled{opacity:.35}
+.nav .lbl{min-width:170px;text-align:center;font-family:var(--f-display);font-weight:600;font-size:19px;letter-spacing:.01em;padding:0 6px}
+.nav .today{width:auto;padding:0 12px;font-size:13px;font-weight:600}
+.sel{min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 34px 0 12px;font-size:14px;font-weight:500;appearance:none;-webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat;max-width:100%}
+.search{min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-size:14px;flex:1 1 160px;min-width:0}
+
+.sample{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--warn-soft);color:var(--ink);border:1px solid var(--warn);border-radius:12px;padding:12px 14px;margin-top:16px;font-size:14px}
+.sample b{color:var(--warn)}
+
+/* resumo */
+main{padding-block:16px 40px;display:grid;gap:16px}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{background:var(--surface);border-radius:12px;padding:12px 14px;border:1px solid var(--line);text-align:left;display:flex;flex-direction:column;gap:2px;min-height:84px}
+.kpi[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.kpi .n{font-family:var(--f-display);font-size:38px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .t{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.kpi.ok .n{color:var(--ok)} .kpi.warn .n{color:var(--warn)} .kpi.bad .n{color:var(--bad)}
+
+.grid2{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:16px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.panel h2{font-family:var(--f-display);font-weight:600;font-size:18px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 10px;color:var(--ink-2)}
+.people{display:grid;gap:4px}
+.person{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border-radius:10px;border:1px solid transparent;background:transparent;text-align:left;width:100%}
+.person[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:13px;background:var(--surface-2);color:var(--ink)}
+.person .nm{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{display:flex;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;margin-top:5px}
+.bar i{display:block;height:100%}
+.bar .b-ok{background:var(--ok)} .bar .b-open{background:var(--warn)} .bar .b-bad{background:var(--bad)}
+.person .ct{font-family:var(--f-mono);font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums;text-align:right}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-3);margin-top:10px}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;background:var(--c)}
+
+.projects{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{min-height:36px;padding:0 12px;border-radius:18px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.chip em{font-style:normal;font-family:var(--f-mono);font-weight:400;color:var(--ink-3);font-size:12px}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip[aria-pressed="true"] em{color:inherit;opacity:.8}
+
+/* lista */
+.list-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.list-head h2{margin:0}
+.active{display:flex;gap:6px;flex-wrap:wrap}
+.tag-x{min-height:30px;padding:0 10px;border-radius:15px;border:0;background:var(--accent-soft);color:var(--ink);font-size:12px;font-weight:600}
+.day{margin-top:12px}
+.day h3{font-family:var(--f-mono);font-weight:500;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 6px;display:flex;gap:8px;align-items:center}
+.day h3 .dot{width:6px;height:6px;border-radius:50%;background:var(--ink-3)}
+.day h3.is-today{color:var(--accent)} .day h3.is-today .dot{background:var(--accent)}
+.cards{display:grid;gap:6px}
+.card{display:grid;grid-template-columns:4px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 0;text-align:left;width:100%;overflow:hidden}
+.card .stripe{align-self:stretch;margin:-12px 0;background:var(--line)}
+.card.st-done .stripe{background:var(--ok)} .card.st-open .stripe{background:var(--warn)} .card.st-late .stripe{background:var(--bad)}
+.card .title{font-weight:600;font-size:15px;overflow-wrap:anywhere}
+.card.st-done .title{color:var(--ink-2)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:4px;font-size:12.5px;color:var(--ink-2);align-items:center}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;font-size:11.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;background:var(--surface-2);color:var(--ink-2)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.bad{background:var(--bad-soft);color:var(--bad)}
+.prio-Urgente{color:var(--bad);font-weight:600} .prio-Importante{color:var(--warn);font-weight:600}
+.faces{display:flex}
+.faces .av{width:30px;height:30px;font-size:11.5px;border:2px solid var(--surface);margin-left:-8px}
+.faces .av:first-child{margin-left:0}
+.empty{padding:40px 16px;text-align:center;color:var(--ink-3)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* detalhe */
+.scrim{position:fixed;inset:0;background:rgba(10,16,24,.45);z-index:40}
+.sheet{position:fixed;z-index:41;right:0;top:0;bottom:0;width:min(520px,100%);background:var(--surface);box-shadow:-8px 0 30px rgba(0,0,0,.2);display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.sheet-h{display:flex;gap:10px;align-items:flex-start;padding:16px 18px;border-bottom:1px solid var(--line)}
+.sheet-h h2{font-family:var(--f-display);font-size:26px;font-weight:700;margin:0;line-height:1.05;flex:1;overflow-wrap:anywhere;text-wrap:balance}
+.sheet-b{padding:16px 18px;overflow:auto;display:grid;gap:16px;align-content:start}
+.dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;margin:0;font-size:14px}
+.dl dt{color:var(--ink-3);font-size:12px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;padding-top:2px}
+.dl dd{margin:0}
+.sec h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:flex;gap:10px;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:14px;overflow-wrap:anywhere}
+.check li::before{content:"";flex:none;width:14px;height:14px;margin-top:3px;border-radius:4px;border:2px solid var(--ink-3)}
+.notes{white-space:pre-wrap;background:var(--bg);border-radius:8px;padding:10px 12px;font-size:14px;overflow-wrap:anywhere}
+.x{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:50;max-width:calc(100% - 32px)}
+
+@media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.nav .lbl{min-width:0;font-size:17px}.brand h1{font-size:22px}}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(30px);opacity:.6}}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="brand">
+        <h1 id="planName">SIC Demandas</h1>
+        <small id="planInfo">Carregando…</small>
+      </div>
+      <label class="btn" for="file" title="Abrir um arquivo do aparelho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
+        Arquivo
+      </label>
+      <button class="btn primary" id="driveBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
+        <span id="driveLbl">Atualizar do Drive</span>
+      </button>
+      <input type="file" id="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+    </div>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Período" id="periodSeg">
+        <button data-p="semana">Semana</button>
+        <button data-p="quinzena">Quinzena</button>
+        <button data-p="mes">Mês</button>
+        <button data-p="tudo">Tudo</button>
+      </div>
+      <div class="nav">
+        <button id="prev" aria-label="Período anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <span class="lbl" id="periodLbl"></span>
+        <button id="next" aria-label="Próximo período"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        <button id="todayBtn" class="today">Hoje</button>
+      </div>
+      <select class="sel" id="personSel" aria-label="Responsável"></select>
+      <select class="sel" id="projectSel" aria-label="Projeto"></select>
+      <select class="sel" id="bucketSel" aria-label="Bucket"></select>
+      <input class="search" id="q" type="search" placeholder="Buscar tarefa, nota ou item…" aria-label="Buscar">
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="sample" id="sampleBanner" hidden>
+    <span><b>Dados de exemplo.</b> Salve o Excel exportado do Planner na pasta <b id="folderName">Painel SIC</b> do seu Google Drive e toque em <b>Atualizar do Drive</b>.</span>
+  </div>
+  <div class="sample" id="configBanner" hidden>
+    <span><b>Falta configurar o Google.</b> Cole o seu Client ID no arquivo <b>config.js</b> (Parte 4 do guia). Até lá, use o botão <b>Arquivo</b>.</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="summary" id="summary" aria-label="Resumo do período"></section>
+  <div class="grid2">
+    <aside style="display:grid;gap:16px;min-width:0">
+      <section class="panel">
+        <h2>Por pessoa</h2>
+        <div class="people" id="people"></div>
+        <div class="legend"><span style="--c:var(--ok)">Concluídas</span><span style="--c:var(--warn)">Em aberto</span><span style="--c:var(--bad)">Atrasadas</span></div>
+      </section>
+      <section class="panel">
+        <h2>Por projeto</h2>
+        <div class="projects" id="projects"></div>
+      </section>
+    </aside>
+    <section class="panel" style="min-width:0">
+      <div class="list-head"><h2 id="listTitle">Tarefas</h2><div class="active" id="active"></div></div>
+      <div id="list"></div>
+    </section>
+  </div>
+</main>
+
+<div id="detail" hidden>
+  <div class="scrim" id="scrim"></div>
+  <aside class="sheet" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="sheet-h"><h2 id="dTitle"></h2><button class="x" id="dClose" aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="sheet-b" id="dBody"></div>
+  </aside>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const DIAS = ["dom","seg","ter","qua","qui","sex","sáb"];
+const LS_DATA = "sic-painel-dados", LS_UI = "sic-painel-filtros";
+
+/* ---------- datas como número de dias (UTC) ---------- */
+const dn = (y,m,d) => Math.floor(Date.UTC(y,m-1,d)/864e5);
+const fromDn = n => { const t = new Date(n*864e5); return {y:t.getUTCFullYear(), m:t.getUTCMonth()+1, d:t.getUTCDate(), w:t.getUTCDay()}; };
+const nowL = new Date(); const TODAY = dn(nowL.getFullYear(), nowL.getMonth()+1, nowL.getDate());
+const pad = n => String(n).padStart(2,"0");
+const fmt = n => { if(n==null) return "—"; const a=fromDn(n); return `${pad(a.d)}/${pad(a.m)}/${a.y}`; };
+const fmtShort = n => { const a=fromDn(n); return `${pad(a.d)}/${pad(a.m)}`; };
+function parseDate(v){
+  if(v==null || v==="") return null;
+  if(typeof v==="number" || /^\d+(\.\d+)?$/.test(v)){ const n=+v; if(n>20000 && n<80000) return Math.floor(n) - 25569; return null; }
+  let m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(v); if(m) return dn(+m[1],+m[2],+m[3]);
+  m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(v); if(m) return dn(+m[3],+m[2],+m[1]);
+  return null;
+}
+
+/* ---------- leitor de .xlsx sem bibliotecas ---------- */
+async function inflate(bytes){
+  const ds = new DecompressionStream("deflate-raw");
+  const out = new Blob([bytes]).stream().pipeThrough(ds);
+  return new Uint8Array(await new Response(out).arrayBuffer());
+}
+async function unzip(buf){
+  const u8 = new Uint8Array(buf), dv = new DataView(buf), files = {};
+  let e = u8.length - 22; while(e >= 0 && dv.getUint32(e,true) !== 0x06054b50) e--;
+  if(e < 0) throw new Error("zip");
+  const count = dv.getUint16(e+10,true); let p = dv.getUint32(e+16,true);
+  const td = new TextDecoder();
+  for(let i=0;i<count;i++){
+    const method = dv.getUint16(p+10,true), csize = dv.getUint32(p+20,true);
+    const nlen = dv.getUint16(p+28,true), xlen = dv.getUint16(p+30,true), clen = dv.getUint16(p+32,true);
+    const off = dv.getUint32(p+42,true); const name = td.decode(u8.subarray(p+46,p+46+nlen));
+    files[name] = {method, csize, off}; p += 46+nlen+xlen+clen;
+  }
+  return async name => {
+    const f = files[name]; if(!f) return null;
+    const start = f.off + 30 + dv.getUint16(f.off+26,true) + dv.getUint16(f.off+28,true);
+    const raw = u8.subarray(start, start+f.csize);
+    const data = f.method === 0 ? raw : await inflate(raw);
+    return td.decode(data);
+  };
+}
+const xml = s => new DOMParser().parseFromString(s, "application/xml");
+const kids = (el, tag) => Array.from(el.getElementsByTagName(tag));
+const colIdx = ref => { let n=0; for(const ch of ref.replace(/\d+/g,"")) n = n*26 + ch.charCodeAt(0)-64; return n-1; };
+async function readWorkbook(buf){
+  const get = await unzip(buf);
+  const wb = xml(await get("xl/workbook.xml"));
+  const rels = xml(await get("xl/_rels/workbook.xml.rels") || "<r/>");
+  const relMap = {}; kids(rels,"Relationship").forEach(r => relMap[r.getAttribute("Id")] = r.getAttribute("Target"));
+  const sstTxt = await get("xl/sharedStrings.xml"); const sst = [];
+  if(sstTxt) kids(xml(sstTxt),"si").forEach(si => sst.push(kids(si,"t").map(t=>t.textContent).join("")));
+  const sheets = {};
+  for(const s of kids(wb,"sheet")){
+    const rid = s.getAttribute("r:id") || s.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships","id");
+    let target = relMap[rid] || ""; target = target.replace(/^\/?xl\//,"").replace(/^\//,"");
+    const txt = await get("xl/"+target); if(!txt) continue;
+    const rows = [];
+    for(const r of kids(xml(txt),"row")){
+      const row = [];
+      for(const c of kids(r,"c")){
+        const t = c.getAttribute("t"), v = c.getElementsByTagName("v")[0];
+        let val = "";
+        if(t === "s") val = sst[+v?.textContent] ?? "";
+        else if(t === "inlineStr") val = kids(c,"t").map(x=>x.textContent).join("");
+        else val = v ? v.textContent : "";
+        row[colIdx(c.getAttribute("r"))] = val;
+      }
+      rows.push(Array.from(row, x => x ?? ""));
+    }
+    sheets[s.getAttribute("name")] = rows;
+  }
+  return sheets;
+}
+
+/* ---------- converte a exportação do Planner ---------- */
+const clean = s => String(s ?? "").replace(/\s+/g," ").trim();
+const split = s => String(s ?? "").split(";").map(clean).filter(Boolean);
+function fromPlanner(sheets){
+  const names = Object.keys(sheets);
+  const pick = names.find(n => /consolidad/i.test(n)) || names.find(n => (sheets[n][0]||[]).includes("Nome da tarefa"));
+  if(!pick) throw new Error("formato");
+  const [head, ...rows] = sheets[pick];
+  const H = {}; head.forEach((h,i) => H[clean(h).toLowerCase()] = i);
+  const col = (r, ...keys) => { for(const k of keys){ const i = H[k]; if(i!=null) return r[i] ?? ""; } return ""; };
+  const tasks = rows.filter(r => clean(col(r,"nome da tarefa"))).map(r => {
+    const ck = /^(\d+)\/(\d+)$/.exec(clean(col(r,"itens concluídos da lista de verificação")));
+    return {
+      id: clean(col(r,"identificação da tarefa")),
+      name: clean(col(r,"nome da tarefa")),
+      bucket: clean(col(r,"categoria","nome do bucket","bucket")),
+      status: clean(col(r,"status","progresso")),
+      prio: clean(col(r,"prioridade")),
+      people: split(col(r,"atribuído a")),
+      by: clean(col(r,"criado por")),
+      created: parseDate(clean(col(r,"criado em"))),
+      due: parseDate(clean(col(r,"data de conclusão"))),
+      start: parseDate(clean(col(r,"data de início"))),
+      doneOn: parseDate(clean(col(r,"concluído em"))),
+      doneBy: clean(col(r,"concluída por")),
+      recur: /^(true|1|verdadeiro)$/i.test(clean(col(r,"é recorrente"))),
+      ckDone: ck ? +ck[1] : null, ckTotal: ck ? +ck[2] : null,
+      items: split(col(r,"itens da lista de verificação")),
+      labels: split(col(r,"rótulos")),
+      notes: String(col(r,"notas") ?? "").trim()
+    };
+  });
+  let plan = "Plano do Planner", exported = null;
+  const p = sheets["Plano"];
+  if(p && p[1]){ const ph = p[0].map(x=>clean(x).toLowerCase()); plan = clean(p[1][ph.indexOf("nome do plano")]) || plan; exported = parseDate(clean(p[1][ph.findIndex(x=>x.startsWith("data da exporta"))])); }
+  return { plan, exported, tasks, sample:false };
+}
+
+/* ---------- dados de exemplo (fictícios) ---------- */
+function sampleData(){
+  const P = ["Ana","Bruno","Carla","Diego","Elisa"];
+  const PR = ["HOSPITAL CENTRO","ESCOLA NORTE","GALPÃO LOG","CONDOMÍNIO SOL","ADM"];
+  const B = ["Em Andamento","Atividades Diárias","Revisão","Protocolos e Viabilidade","Finalizado"];
+  const T = ["Dimensionamento água fria","Memorial hidrossanitário","Compatibilização elétrica x estrutura","SPDA – revisão de captores","Protocolo Corpo de Bombeiros","Prancha de esgoto pav. térreo","Levantamento de cargas","Reunião de coordenação","Quadro de cargas QD-01","Revisão de projeto de incêndio","Detalhe de reservatório","Orçamento de instalações"];
+  const tasks = []; let seed = 7; const rnd = n => (seed = (seed*9301+49297)%233280, Math.floor(seed/233280*n));
+  for(let i=0;i<46;i++){
+    const due = TODAY + rnd(40) - 22, start = due - rnd(6);
+    const done = due < TODAY ? rnd(10) < 8 : rnd(10) < 2;
+    const ppl = [P[rnd(5)]]; if(rnd(4)===0) ppl.push(P[rnd(5)]);
+    const tot = rnd(3) ? 0 : 2+rnd(4);
+    tasks.push({ id:"ex"+i, name:T[rnd(T.length)], bucket:B[rnd(B.length)], status: done ? "Concluída" : (rnd(2)?"Em andamento":"Não iniciado"),
+      prio:["Média","Média","Importante","Urgente"][rnd(4)], people:[...new Set(ppl)], by:P[0], created:start-3, due, start,
+      doneOn: done ? due - rnd(2) : null, doneBy: done ? ppl[0] : "", recur:false,
+      ckDone: tot ? (done?tot:rnd(tot)) : null, ckTotal: tot||null, items: tot ? Array.from({length:tot},(_, k)=>`Item ${k+1} da verificação`) : [],
+      labels:[PR[rnd(PR.length)]], notes: rnd(3)? "" : "Exemplo de nota da tarefa." });
+  }
+  return { plan:"Exemplo · Setor de Instalações", exported:TODAY, tasks, sample:true };
+}
+
+/* ---------- estado ---------- */
+let DATA, ui = { period:"semana", anchor:TODAY, person:"", project:"", bucket:"", status:"", q:"" };
+try { const s = JSON.parse(localStorage.getItem(LS_UI)||"null"); if(s) Object.assign(ui, s, {anchor:TODAY}); } catch(e){}
+try { const d = JSON.parse(localStorage.getItem(LS_DATA)||"null"); if(d && d.tasks) DATA = d; } catch(e){}
+if(!DATA) DATA = sampleData();
+const saveUi = () => { try { const {anchor, ...rest} = ui; localStorage.setItem(LS_UI, JSON.stringify(rest)); } catch(e){} };
+
+const isDone = t => /conclu/i.test(t.status);
+const state = t => isDone(t) ? "done" : (t.due != null && t.due < TODAY ? "late" : "open");
+
+function range(){
+  const a = fromDn(ui.anchor);
+  if(ui.period === "semana"){ const s = ui.anchor - ((a.w+6)%7); return [s, s+6]; }
+  const last = fromDn(dn(a.m===12?a.y+1:a.y, a.m===12?1:a.m+1, 1)-1).d;
+  if(ui.period === "quinzena") return a.d <= 15 ? [dn(a.y,a.m,1), dn(a.y,a.m,15)] : [dn(a.y,a.m,16), dn(a.y,a.m,last)];
+  if(ui.period === "mes") return [dn(a.y,a.m,1), dn(a.y,a.m,last)];
+  return [-Infinity, Infinity];
+}
+function rangeLabel([s,e]){
+  if(ui.period === "tudo") return "Todo o plano";
+  const a = fromDn(s);
+  if(ui.period === "mes") return `${MESES[a.m-1][0].toUpperCase()+MESES[a.m-1].slice(1)} ${a.y}`;
+  if(ui.period === "quinzena") return `${a.d===1?"1ª":"2ª"} quinzena · ${MESES[a.m-1].slice(0,3)}/${String(a.y).slice(2)}`;
+  return `${fmtShort(s)} – ${fmtShort(e)}`;
+}
+function inRange(t,[s,e]){
+  if(ui.period === "tudo") return true;
+  const a = t.start ?? t.due, b = t.due ?? t.start;
+  if(a != null && a <= e && b >= s) return true;
+  if(t.doneOn != null && t.doneOn >= s && t.doneOn <= e) return true;
+  if(state(t) === "late" && s <= TODAY && TODAY <= e) return true; // atrasada aparece no período atual
+  return false;
+}
+const matchQ = t => !ui.q || (t.name+" "+t.notes+" "+t.items.join(" ")+" "+t.labels.join(" ")).toLowerCase().includes(ui.q.toLowerCase());
+
+function filtered(skip){
+  const r = range();
+  return DATA.tasks.filter(t => inRange(t,r) && matchQ(t)
+    && (skip==="person" || !ui.person || t.people.includes(ui.person))
+    && (skip==="project" || !ui.project || t.labels.includes(ui.project))
+    && (skip==="bucket" || !ui.bucket || t.bucket === ui.bucket)
+    && (skip==="status" || !ui.status || state(t) === ui.status));
+}
+
+/* ---------- desenho ---------- */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const initials = n => n.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+const HUES = [212,150,30,280,0,190,95,330];
+const allPeople = () => [...new Set(DATA.tasks.flatMap(t=>t.people))].sort((a,b)=>a.localeCompare(b,"pt"));
+const avatar = n => { const i = allPeople().indexOf(n); const h = HUES[(i<0?0:i)%HUES.length];
+  return `<span class="av" style="background:hsl(${h} 55% 50% / .2);color:hsl(${h} 55% 42%)" title="${esc(n)}">${esc(initials(n))}</span>`; };
+const STLBL = {done:["Concluída","ok"], open:["Em aberto","warn"], late:["Atrasada","bad"]};
+
+function fillSelect(el, label, values, current){
+  el.innerHTML = `<option value="">${label}</option>` + values.map(([v,n]) => `<option value="${esc(v)}"${v===current?" selected":""}>${esc(v)} (${n})</option>`).join("");
+}
+function counts(list, fn){ const m = new Map(); list.forEach(t => fn(t).forEach(k => m.set(k,(m.get(k)||0)+1))); return [...m].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"pt")); }
+
+function render(){
+  const r = range();
+  $("#planName").textContent = DATA.plan;
+  const sync = DATA.syncedAt ? ` · atualizado ${new Date(DATA.syncedAt).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}${DATA.source?` (${DATA.source})`:""}` : "";
+  $("#planInfo").textContent = DATA.sample ? "Dados de exemplo" : `Exportado em ${fmt(DATA.exported)} · ${DATA.tasks.length} tarefas${sync}`;
+  $("#configBanner").hidden = driveReady();
+  $("#sampleBanner").hidden = !DATA.sample;
+  document.querySelectorAll("#periodSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.p === ui.period));
+  $("#periodLbl").textContent = rangeLabel(r);
+  ["#prev","#next"].forEach(s => $(s).disabled = ui.period === "tudo");
+  $("#todayBtn").hidden = ui.period === "tudo";
+
+  fillSelect($("#personSel"), "Todas as pessoas", counts(filtered("person"), t=>t.people), ui.person);
+  fillSelect($("#projectSel"), "Todos os projetos", counts(filtered("project"), t=>t.labels), ui.project);
+  fillSelect($("#bucketSel"), "Todos os buckets", counts(filtered("bucket"), t=>t.bucket?[t.bucket]:[]), ui.bucket);
+
+  /* resumo */
+  const base = filtered("status");
+  const c = {done:0, open:0, late:0}; base.forEach(t => c[state(t)]++);
+  const kp = [["", base.length, "No período", ""], ["open", c.open, "Em aberto", "warn"], ["late", c.late, "Atrasadas", "bad"], ["done", c.done, "Concluídas", "ok"]];
+  $("#summary").innerHTML = kp.map(([k,n,t,cls]) => `<button class="kpi ${cls}" data-st="${k}" aria-pressed="${ui.status===k}"><span class="n">${n}</span><span class="t">${t}</span></button>`).join("");
+
+  /* por pessoa */
+  const pl = filtered("person"); const pm = new Map();
+  pl.forEach(t => t.people.forEach(p => { const o = pm.get(p) || {done:0,open:0,late:0}; o[state(t)]++; pm.set(p,o); }));
+  const pp = [...pm].sort((a,b) => (b[1].open+b[1].late) - (a[1].open+a[1].late) || (b[1].done - a[1].done));
+  const mx = Math.max(1, ...pp.map(([,o]) => o.done+o.open+o.late));
+  $("#people").innerHTML = pp.length ? pp.map(([p,o]) => { const tot = o.done+o.open+o.late;
+    return `<button class="person" data-person="${esc(p)}" aria-pressed="${ui.person===p}">${avatar(p)}
+      <span style="min-width:0"><span class="nm" style="display:block">${esc(p)}</span>
+      <span class="bar" style="width:${Math.max(12,tot/mx*100)}%"><i class="b-ok" style="width:${o.done/tot*100}%"></i><i class="b-open" style="width:${o.open/tot*100}%"></i><i class="b-bad" style="width:${o.late/tot*100}%"></i></span></span>
+      <span class="ct">${o.open+o.late} <span style="color:var(--ink-3)">/ ${tot}</span></span></button>`; }).join("")
+    : `<div class="empty" style="padding:16px">Ninguém com tarefas neste filtro.</div>`;
+
+  /* por projeto */
+  const pc = counts(filtered("project"), t => t.labels);
+  $("#projects").innerHTML = pc.length ? pc.map(([p,n]) => `<button class="chip" data-project="${esc(p)}" aria-pressed="${ui.project===p}">${esc(p)} <em>${n}</em></button>`).join("") : `<span style="color:var(--ink-3)">Sem projetos neste filtro.</span>`;
+
+  /* filtros ativos */
+  const act = [];
+  if(ui.person) act.push(["person", ui.person]); if(ui.project) act.push(["project", ui.project]);
+  if(ui.bucket) act.push(["bucket", ui.bucket]); if(ui.status) act.push(["status", STLBL[ui.status][0]]);
+  if(ui.q) act.push(["q", `“${ui.q}”`]);
+  $("#active").innerHTML = act.map(([k,v]) => `<button class="tag-x" data-clear="${k}">${esc(v)} ✕</button>`).join("") + (act.length>1 ? `<button class="tag-x" data-clear="all">Limpar tudo</button>` : "");
+
+  /* lista */
+  const list = filtered().sort((a,b) => { const o={late:0,open:1,done:2}; return ((a.due??1e9)-(b.due??1e9)) || (o[state(a)]-o[state(b)]) || a.name.localeCompare(b.name,"pt"); });
+  $("#listTitle").textContent = `Tarefas (${list.length})`;
+  if(!list.length){ $("#list").innerHTML = `<div class="empty">Nenhuma tarefa com esses filtros.<br>Tente outro período ou toque em “Limpar tudo”.</div>`; return; }
+  const groups = new Map(); list.forEach(t => { const k = t.due ?? "sem"; if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(t); });
+  $("#list").innerHTML = [...groups].map(([k, ts]) => {
+    const lbl = k === "sem" ? "Sem prazo" : `${DIAS[fromDn(k).w]} ${fmt(k)}${k===TODAY?" · hoje":k===TODAY+1?" · amanhã":""}`;
+    return `<div class="day"><h3 class="${k===TODAY?"is-today":""}"><span class="dot"></span>Prazo ${lbl} <span>· ${ts.length}</span></h3><div class="cards">${ts.map(card).join("")}</div></div>`;
+  }).join("");
+}
+function card(t){
+  const s = state(t), [sl, sc] = STLBL[s];
+  const ck = t.ckTotal ? `<span class="mono">☑ ${t.ckDone}/${t.ckTotal}</span>` : "";
+  const pr = t.prio && t.prio !== "Média" ? `<span class="prio-${esc(t.prio)}">${esc(t.prio)}</span>` : "";
+  return `<button class="card st-${s}" data-id="${esc(t.id)}"><span class="stripe"></span>
+    <span style="min-width:0"><span class="title">${esc(t.name)}</span>
+      <span class="meta"><span class="pill ${sc}">${sl}</span>${t.labels.map(l=>`<span class="pill">${esc(l)}</span>`).join("")}${pr}<span>${esc(t.bucket)}</span>${ck}</span></span>
+    <span class="faces">${t.people.slice(0,3).map(avatar).join("")}${t.people.length>3?`<span class="av">+${t.people.length-3}</span>`:""}</span></button>`;
+}
+function openDetail(id){
+  const t = DATA.tasks.find(x => x.id === id); if(!t) return;
+  const [sl, sc] = STLBL[state(t)];
+  $("#dTitle").textContent = t.name;
+  $("#dBody").innerHTML = `
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${sc}">${sl}</span>${t.labels.map(l=>`<span class="pill">${esc(l)}</span>`).join("")}${t.recur?`<span class="pill">Recorrente</span>`:""}</div>
+    <dl class="dl">
+      <dt>Responsáveis</dt><dd>${t.people.map(esc).join(", ")||"—"}</dd>
+      <dt>Bucket</dt><dd>${esc(t.bucket)||"—"}</dd>
+      <dt>Prioridade</dt><dd class="prio-${esc(t.prio)}">${esc(t.prio)||"—"}</dd>
+      <dt>Início</dt><dd class="mono">${fmt(t.start)}</dd>
+      <dt>Prazo</dt><dd class="mono">${fmt(t.due)}</dd>
+      ${t.doneOn!=null?`<dt>Concluída</dt><dd class="mono">${fmt(t.doneOn)}${t.doneBy?` · <span style="font-family:var(--f-body)">${esc(t.doneBy)}</span>`:""}</dd>`:""}
+      <dt>Criada</dt><dd class="mono">${fmt(t.created)}${t.by?` · <span style="font-family:var(--f-body)">${esc(t.by)}</span>`:""}</dd>
+    </dl>
+    ${t.items.length?`<div class="sec"><h4>Lista de verificação · ${t.ckDone??0}/${t.ckTotal??t.items.length} concluídos</h4><ul class="check">${t.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`:""}
+    ${t.notes?`<div class="sec"><h4>Notas</h4><div class="notes">${esc(t.notes)}</div></div>`:""}`;
+  $("#detail").hidden = false; $("#dClose").focus();
+}
+const closeDetail = () => { $("#detail").hidden = true; };
+
+/* ---------- eventos ---------- */
+const set = (k,v) => { ui[k] = v; saveUi(); render(); };
+$("#periodSeg").addEventListener("click", e => { const b = e.target.closest("button"); if(b) set("period", b.dataset.p); });
+$("#prev").onclick = () => set("anchor", range()[0]-1);
+$("#next").onclick = () => set("anchor", range()[1]+1);
+$("#todayBtn").onclick = () => set("anchor", TODAY);
+$("#personSel").onchange = e => set("person", e.target.value);
+$("#projectSel").onchange = e => set("project", e.target.value);
+$("#bucketSel").onchange = e => set("bucket", e.target.value);
+let qT; $("#q").value = ui.q; $("#q").oninput = e => { clearTimeout(qT); qT = setTimeout(() => set("q", e.target.value.trim()), 200); };
+document.addEventListener("click", e => {
+  const k = e.target.closest(".kpi"); if(k) return set("status", ui.status === k.dataset.st ? "" : k.dataset.st);
+  const p = e.target.closest(".person"); if(p) return set("person", ui.person === p.dataset.person ? "" : p.dataset.person);
+  const c = e.target.closest(".chip"); if(c) return set("project", ui.project === c.dataset.project ? "" : c.dataset.project);
+  const x = e.target.closest(".tag-x"); if(x){ const f = x.dataset.clear; if(f==="all"){ Object.assign(ui,{person:"",project:"",bucket:"",status:"",q:""}); $("#q").value=""; saveUi(); render(); } else { if(f==="q") $("#q").value=""; set(f,""); } return; }
+  const cd = e.target.closest(".card"); if(cd) return openDetail(cd.dataset.id);
+});
+$("#scrim").onclick = closeDetail; $("#dClose").onclick = closeDetail;
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeDetail(); });
+
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(()=>t.hidden=true, 3500); }
+async function loadBuffer(buf, source){
+  const d = fromPlanner(await readWorkbook(buf));
+  if(!d.tasks.length) throw new Error("vazio");
+  d.source = source; d.syncedAt = Date.now();
+  DATA = d; Object.assign(ui,{person:"",project:"",bucket:"",status:"",anchor:TODAY});
+  try { localStorage.setItem(LS_DATA, JSON.stringify(d)); } catch(err){}
+  render(); toast(`${d.tasks.length} tarefas carregadas de “${d.plan}”.`);
+}
+$("#file").addEventListener("change", async e => {
+  const f = e.target.files[0]; if(!f) return;
+  try { await loadBuffer(await f.arrayBuffer(), f.name); }
+  catch(err){ console.error(err); toast("Não consegui ler esse arquivo. Use o Excel gerado por “Exportar plano para Excel” no Planner."); }
+  e.target.value = "";
+});
+
+/* ---------- Google Drive ---------- */
+const CFG = window.PAINEL_CONFIG || {};
+const FOLDER = CFG.PASTA_DRIVE || "Painel SIC";
+$("#folderName").textContent = FOLDER;
+function driveReady(){ return !!(CFG.CLIENT_ID && /\.apps\.googleusercontent\.com$/.test(CFG.CLIENT_ID.trim())); }
+let token = null, tokenExp = 0, tokenClient = null;
+try { const t = JSON.parse(sessionStorage.getItem("sic-token")||"null"); if(t && t.exp > Date.now()+60000){ token = t.v; tokenExp = t.exp; } } catch(e){}
+function getToken(){
+  return new Promise((resolve, reject) => {
+    if(token && tokenExp > Date.now()+60000) return resolve(token);
+    if(!window.google?.accounts?.oauth2) return reject(new Error("Sem conexão com o Google. Verifique a internet e tente de novo."));
+    if(!tokenClient) tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CFG.CLIENT_ID.trim(),
+      scope: "https://www.googleapis.com/auth/drive.readonly",
+      callback: () => {}
+    });
+    tokenClient.callback = r => {
+      if(r.error) return reject(new Error("Acesso ao Drive não autorizado."));
+      token = r.access_token; tokenExp = Date.now() + (r.expires_in||3600)*1000;
+      try { sessionStorage.setItem("sic-token", JSON.stringify({v:token, exp:tokenExp})); } catch(e){}
+      resolve(token);
+    };
+    tokenClient.error_callback = () => reject(new Error("A janela de login do Google foi fechada."));
+    tokenClient.requestAccessToken({prompt: ""});
+  });
+}
+async function gapi(path, asBuffer){
+  const r = await fetch("https://www.googleapis.com/drive/v3/" + path, { headers:{ Authorization:"Bearer " + token } });
+  if(r.status === 401){ token = null; throw new Error("Sessão do Google expirou. Toque em Atualizar de novo."); }
+  if(!r.ok) throw new Error("O Drive respondeu com erro " + r.status + ".");
+  return asBuffer ? r.arrayBuffer() : r.json();
+}
+const qs = o => new URLSearchParams(o).toString();
+const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", GSHEET = "application/vnd.google-apps.spreadsheet";
+async function syncDrive(){
+  if(!driveReady()){ toast("Configure o Client ID no config.js primeiro (Parte 4 do guia)."); return; }
+  if(!navigator.onLine){ toast("Sem internet. O painel continua com os últimos dados baixados."); return; }
+  const btn = $("#driveBtn"); btn.disabled = true; $("#driveLbl").textContent = "Buscando…";
+  try {
+    await getToken();
+    const fq = `name = '${FOLDER.replace(/'/g,"\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+    const folders = (await gapi("files?" + qs({q:fq, fields:"files(id,name)", pageSize:"10"}))).files || [];
+    if(!folders.length) throw new Error(`Não achei a pasta “${FOLDER}” no seu Drive.`);
+    const parents = folders.map(f => `'${f.id}' in parents`).join(" or ");
+    const q = `(${parents}) and trashed = false and (mimeType = '${XLSX_MIME}' or mimeType = '${GSHEET}')`;
+    const files = (await gapi("files?" + qs({q, orderBy:"modifiedTime desc", pageSize:"1", fields:"files(id,name,mimeType,modifiedTime)"}))).files || [];
+    if(!files.length) throw new Error(`A pasta “${FOLDER}” está sem planilha. Salve nela o Excel exportado do Planner.`);
+    const f = files[0];
+    const buf = f.mimeType === GSHEET
+      ? await gapi(`files/${f.id}/export?` + qs({mimeType:XLSX_MIME}), true)
+      : await gapi(`files/${f.id}?alt=media`, true);
+    await loadBuffer(buf, f.name);
+  } catch(err){
+    console.error(err);
+    toast(/zip|formato|vazio/.test(err.message) ? "A planilha da pasta não está no formato do Planner." : err.message);
+  } finally { btn.disabled = false; $("#driveLbl").textContent = "Atualizar do Drive"; }
+}
+$("#driveBtn").addEventListener("click", syncDrive);
+
+/* ---------- modo offline (app instalado) ---------- */
+if("serviceWorker" in navigator && location.protocol === "https:"){
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+
+render();
+})();
+</script>
+
+</body>
+</html>
