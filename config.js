@@ -3,7 +3,7 @@
 // Ele termina com .apps.googleusercontent.com
 
 window.PAINEL_CONFIG = {
-  CLIENT_ID: "COLE_AQUI_O_CLIENT_ID",
+  CLIENT_ID: "1072648300722-u0feic81reuo1kh72857ioqu52f8ovks.apps.googleusercontent.com",
 
   // Nome da pasta do seu Google Drive onde você salva o Excel exportado do Planner.
   PASTA_DRIVE: "Painel SIC"
