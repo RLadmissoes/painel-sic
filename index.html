@@ -8,6 +8,8 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="config.js"></script>
+<script src="relatorios.js"></script>
+<script src="docx.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <title>Painel SIC Demandas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -211,6 +213,58 @@ main{padding-block:16px 40px;display:grid;gap:16px}
 .add-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .tag-gone{display:inline-block;margin-left:6px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3)}
 
+/* concluídas no app */
+.local-b{background:var(--accent-soft);border-color:var(--accent)}
+.local-b b{color:var(--accent)!important}
+.lnk-b{margin-left:auto;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font-weight:600;border-radius:8px;min-height:36px;padding:0 12px;font-size:13px}
+.pill.app{background:var(--accent);color:var(--accent-ink)}
+.loc-box{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px}
+.loc-box.on{border-color:var(--accent);background:var(--accent-soft)}
+.loc-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.loc-row input[type=date]{min-height:42px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 10px;font-size:14px;color:var(--ink)}
+.loc-row button{min-height:42px;padding:0 14px;border-radius:10px;font-weight:600;font-size:14px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+.loc-row button.sec{background:var(--surface);color:var(--accent)}
+.loc-list{display:grid;gap:6px}
+.loc-list .it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13.5px}
+.loc-list .it small{display:block;color:var(--ink-3);font-size:12px}
+
+/* exportar */
+.xsheet{width:min(660px,100%)}
+.xl{display:grid;gap:8px}
+.xr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.xr .nm{font-weight:600;font-size:15px;border:0;background:none;padding:0;text-align:left;color:var(--ink)}
+.xr .ds{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.xr .bt{display:flex;gap:6px}
+.xr .bt button,.xfoot button{min-height:42px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:13.5px;color:var(--ink)}
+.xr .bt button.pdf,.xfoot .pdf{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.xr .cfg{font-size:12.5px;color:var(--accent);font-weight:600;border:0;background:none;padding:6px 0 0;min-height:30px}
+.xsec{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.xsec h4{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.xsec .hint{font-size:12.5px;color:var(--ink-2);margin:0}
+.xsec select,.xsec input[type=text],.xsec input[type=date],.xsec textarea{min-height:42px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 10px;font-size:14px;color:var(--ink);width:100%;min-width:0}
+.xsec textarea{padding:10px;min-height:76px;resize:vertical;line-height:1.45;font-family:var(--f-body)}
+.xrow2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.xbk{display:flex;flex-wrap:wrap;gap:6px}
+.xbk label{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 12px;border:1px solid var(--line);border-radius:19px;font-size:13px;cursor:pointer}
+.xbk label:has(input:checked){background:var(--accent-soft);border-color:var(--accent)}
+.xbk input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.xfa{display:flex;gap:6px;flex-wrap:wrap}
+.xfa button{border:0;background:none;color:var(--accent);font-weight:600;font-size:12.5px;min-height:32px;padding:0 4px}
+.adj{display:grid;gap:6px}
+.adj-r{display:grid;grid-template-columns:28px minmax(0,1fr) 74px 136px;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.adj-r.off{opacity:.5}
+.adj-r.chg{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.adj-r input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent);margin:0}
+.adj-r .n{font-size:13px;min-width:0}
+.adj-r .n b{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.adj-r select,.adj-r input[type=date]{min-height:38px;font-size:13px;padding:0 6px}
+.man{border:1px dashed var(--accent);border-radius:10px;padding:10px;display:grid;gap:6px}
+.man .xrow2{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 74px}
+.xfoot{display:flex;gap:8px;justify-content:flex-end;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
+.xfoot button{min-width:120px}
+#reportOut{display:none}
+@media (max-width:560px){.adj-r{grid-template-columns:28px minmax(0,1fr) 70px;}.adj-r input[type=date]{grid-column:2 / -1}.man .xrow2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+
 /* cabeçalho que só aparece no PDF */
 .print-head{display:none}
 
@@ -231,7 +285,10 @@ main{padding-block:16px 40px;display:grid;gap:16px}
     --shadow:none; color-scheme:light}
   html,body{background:#fff!important;padding:0!important;font-size:12px}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body::before,header.top,.sample,#detail,#team,.toast,.tag-x[data-clear="all"]{display:none!important}
+  body::before,header.top,.sample,#detail,#team,#exp,.toast,.tag-x[data-clear="all"]{display:none!important}
+  body.print-report > *:not(#reportOut){display:none!important}
+  body.print-report #reportOut{display:block!important}
+  body.print-report{font-size:10.5px}
   .wrap{max-width:none;padding:0!important}
   main{padding:0;gap:10px}
   .print-head{display:block;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:10px}
@@ -291,9 +348,9 @@ main{padding-block:16px 40px;display:grid;gap:16px}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
         Arquivo
       </label>
-      <button class="btn" id="pdfBtn" title="Salvar o que está na tela como PDF">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
-        PDF
+      <button class="btn" id="expBtn" title="Dashboard e relatórios em PDF ou Word">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg>
+        Exportar
       </button>
       <button class="btn primary" id="driveBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
@@ -334,6 +391,7 @@ main{padding-block:16px 40px;display:grid;gap:16px}
   <div class="sample" id="sampleBanner" hidden>
     <span><b>Dados de exemplo.</b> Salve o Excel exportado do Planner na pasta <b id="folderName">Painel SIC</b> do seu Google Drive e toque em <b>Atualizar do Drive</b>.</span>
   </div>
+  <div class="sample local-b" id="localBanner" hidden></div>
   <div class="sample" id="configBanner" hidden>
     <span><b>Falta configurar o Google.</b> Cole o seu Client ID no arquivo <b>config.js</b> (Parte 4 do guia). Até lá, use o botão <b>Arquivo</b>.</span>
   </div>
@@ -385,6 +443,14 @@ main{padding-block:16px 40px;display:grid;gap:16px}
     <div class="sheet-b" id="dBody"></div>
   </aside>
 </div>
+<div id="exp" hidden>
+  <div class="scrim" id="xScrim"></div>
+  <aside class="sheet xsheet" role="dialog" aria-modal="true" aria-labelledby="xTitle">
+    <div class="sheet-h"><button class="x" id="xBack" aria-label="Voltar" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2 id="xTitle">Exportar</h2><button class="x" id="xClose" aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="sheet-b" id="xBody"></div>
+    <div class="xfoot" id="xFoot" hidden></div>
+  </aside>
+</div>
 <div id="team" hidden>
   <div class="scrim" id="tScrim"></div>
   <aside class="sheet" role="dialog" aria-modal="true" aria-labelledby="tTitle">
@@ -397,6 +463,7 @@ main{padding-block:16px 40px;display:grid;gap:16px}
   </aside>
 </div>
 <div class="toast" id="toast" hidden></div>
+<div id="reportOut"></div>
 
 <script>
 (() => {
@@ -546,6 +613,27 @@ if(!Array.isArray(ui.exBuckets)) ui.exBuckets = [];
 delete ui.bucket;
 try { const d = JSON.parse(localStorage.getItem(LS_DATA)||"null"); if(d && d.tasks) DATA = d; } catch(e){}
 if(!DATA) DATA = sampleData();
+
+/* ---------- conclusões feitas só no app (não alteram o Planner) ---------- */
+const LS_LOC = "sic-concluidas-app";
+let LOC = {};
+try { const l = JSON.parse(localStorage.getItem(LS_LOC)||"null"); if(l && typeof l === "object") LOC = l; } catch(e){}
+const saveLoc = () => { try { localStorage.setItem(LS_LOC, JSON.stringify(LOC)); } catch(e){} };
+/* aplica as conclusões locais; devolve quantas já aparecem concluídas no Planner (e foram limpas) */
+function applyLocal(){
+  let cleared = 0;
+  DATA.tasks.forEach(t => {
+    if(t._orig){ t.status = t._orig.status; t.doneOn = t._orig.doneOn; t.doneBy = t._orig.doneBy; delete t._orig; delete t.localDone; }
+    const L = LOC[t.id]; if(!L) return;
+    if(/conclu/i.test(t.status)){ delete LOC[t.id]; cleared++; return; }
+    t._orig = {status:t.status, doneOn:t.doneOn, doneBy:t.doneBy};
+    t.status = "Concluída"; t.doneOn = L.doneOn; t.doneBy = "no app"; t.localDone = true;
+  });
+  if(cleared && !DATA.sample) saveLoc();
+  return cleared;
+}
+applyLocal();
+const localList = () => DATA.tasks.filter(t => t.localDone);
 const saveUi = () => { try { const {anchor, ...rest} = ui; localStorage.setItem(LS_UI, JSON.stringify(rest)); } catch(e){} };
 
 const isDone = t => /conclu/i.test(t.status);
@@ -661,6 +749,9 @@ function render(){
   const sync = DATA.syncedAt ? ` · atualizado ${new Date(DATA.syncedAt).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}${DATA.source?` (${DATA.source})`:""}` : "";
   $("#planInfo").textContent = DATA.sample ? "Dados de exemplo" : `Exportado em ${fmt(DATA.exported)} · ${DATA.tasks.length} tarefas${sync}`;
   $("#configBanner").hidden = driveReady();
+  const ll = localList();
+  $("#localBanner").hidden = !ll.length;
+  if(ll.length) $("#localBanner").innerHTML = `<span><b>${ll.length} tarefa${ll.length>1?"s":""} concluída${ll.length>1?"s":""} só no app.</b> Conclua também no Planner para os dados ficarem iguais.</span><button class="lnk-b" id="localSee">Ver lista</button>`;
   $("#sampleBanner").hidden = !DATA.sample;
   document.querySelectorAll("#periodSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.p === ui.period));
   $("#periodLbl").textContent = rangeLabel(r);
@@ -827,10 +918,227 @@ function fillPrintHead(){
   return wk;
 }
 let oldTitle = document.title;
-window.addEventListener("beforeprint", () => { const wk = fillPrintHead(); oldTitle = document.title;
+window.addEventListener("beforeprint", () => { if(document.body.classList.contains("print-report")) return; const wk = fillPrintHead(); oldTitle = document.title;
   const t = fromDn(TODAY); document.title = `Painel SIC - Semana ${pad(wk.week)} - ${t.y}-${pad(t.m)}-${pad(t.d)}`; });
-window.addEventListener("afterprint", () => { document.title = oldTitle; });
-$("#pdfBtn").addEventListener("click", () => { closeDetail(); $("#bk").open = false; fillPrintHead(); window.print(); });
+window.addEventListener("afterprint", () => { document.title = oldTitle; if(document.body.classList.contains("print-report")){ document.body.classList.remove("print-report"); $("#reportOut").innerHTML = ""; } });
+function printDashboard(){ closeDetail(); $("#bk").open = false; fillPrintHead(); window.print(); }
+
+
+/* ---------- Exportar: dashboard e relatórios ---------- */
+const R = window.SIC_RELATORIOS, LS_REP = "sic-relatorios";
+const EX_DEFAULT = ["Protocolos e Viabilidade","Reuniões","Atividades Diárias"];
+const REPORTS = [
+  {k:"plan",  fn:"planejamento", nome:"Planejamento semanal", desc:"Matriz de demandas, responsabilidades e marcos da semana.", rec:"semana",
+   fields:[["objetivo","Objetivo da semana"],["riscos","Riscos principais"],["compat","Compatibilizações"],["obs","Observações"]]},
+  {k:"fech",  fn:"fechamento",   nome:"Fechamento semanal",   desc:"Planejado × realizado, entregas, atrasos e pendências.", rec:"semana", fields:[["obsFech","Observações da coordenação"]]},
+  {k:"proj",  fn:"projeto",      nome:"Relatório de projeto", desc:"Situação por disciplina e etapa, linha do tempo e equipe.", rec:"projeto", fields:[["obsProj","Observações"]]},
+  {k:"indiv", fn:"colaborador",  nome:"Relatório individual", desc:"Entregas, prazos e pendências de um colaborador no mês.", rec:"pessoa", fields:[["coment","Comentários da coordenação"]]},
+  {k:"mensal",fn:"mensal",       nome:"Relatório mensal do setor", desc:"Entregas, prazos, distribuição do trabalho e dependências.", rec:"mes", fields:[["destaques","Destaques e próximos passos"]]},
+  {k:"saude", fn:"saude",        nome:"Checagem do Planner",  desc:"O que ajustar no Planner para os relatórios saírem certos.", rec:"", fields:[]}
+];
+const TPL_DEFAULT = {
+  riscos: "Concentração simultânea de atividades em mais de um projeto; dependência entre disciplinas; atraso na consolidação das listas; pendências sem retorno no grupo.",
+  compat: "Arine - Estrutural | Kriss - Arquitetura | Rodrigo - Elétrica e Dados | Jonathas - Instalações Civis"
+};
+let REP = {ex:{}, tpl:{}, txt:{}, over:{}, manual:{}, snap:{}};
+try { const x = JSON.parse(localStorage.getItem(LS_REP)||"null"); if(x) REP = Object.assign(REP, x); } catch(e){}
+const saveRep = () => { try { localStorage.setItem(LS_REP, JSON.stringify(REP)); } catch(e){} };
+const repOf = k => REPORTS.find(r => r.k === k);
+const isoD = n => { const a = fromDn(n); return `${a.y}-${pad(a.m)}-${pad(a.d)}`; };
+const fromIso = v => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v||""); return m ? dn(+m[1],+m[2],+m[3]) : null; };
+const monthStart = n => { const a = fromDn(n); return dn(a.y, a.m, 1); };
+const MESES_C = d => { const a = fromDn(d); return MESES[a.m-1][0].toUpperCase() + MESES[a.m-1].slice(1) + " " + a.y; };
+
+/* recorte padrão de cada relatório */
+const CUR = {};
+function curOf(k){
+  if(CUR[k]) return CUR[k];
+  const wd = (fromDn(TODAY).w + 6) % 7, mon = TODAY - wd;
+  const mStart = fromDn(TODAY).d <= 10 ? monthStart(monthStart(TODAY) - 1) : monthStart(TODAY);
+  const c = {};
+  if(k === "plan") c.day = wd >= 4 ? mon + 7 : mon;
+  else if(k === "fech") c.day = wd >= 4 ? mon : mon - 7;
+  else if(k === "mensal" || k === "indiv") c.day = mStart;
+  else c.day = TODAY;
+  if(k === "indiv"){ const m = TEAM.find(m => m.funcao !== "coord" && activeIn(m.planner, [TODAY,TODAY])) || TEAM[0]; c.person = m ? m.planner : ""; }
+  if(k === "proj"){ const skip = /^(ATIVIDADES|ADM|REUNIÃO|VIABILIDADE)$/; const cnt = new Map();
+    DATA.tasks.filter(t => (t.doneOn ?? t.due ?? 0) >= TODAY - 60).forEach(t => t.labels.forEach(l => { if(!skip.test(l)) cnt.set(l, (cnt.get(l)||0)+1); }));
+    c.project = [...cnt].sort((a,b)=>b[1]-a[1])[0]?.[0] || (DATA.tasks.find(t=>t.labels.length)?.labels[0] || ""); }
+  return CUR[k] = c;
+}
+function perKey(k, c){
+  const r = repOf(k);
+  if(r.rec === "semana") return "w" + R.sicWeek(c.day).start;
+  if(r.rec === "mes") return "m" + monthStart(c.day);
+  if(r.rec === "pessoa") return "i" + c.person + "|" + monthStart(c.day);
+  if(r.rec === "projeto") return "p" + c.project;
+  return "s";
+}
+const exOf = k => REP.ex[k] || EX_DEFAULT;
+function baseOpts(k, c){
+  const ex = exOf(k), bAll = allBuckets(), on = bAll.filter(b => !ex.includes(b));
+  const coord = TEAM.find(m => m.funcao === "coord"), pk = perKey(k, c);
+  return { now:new Date(), exported:DATA.exported, coord: coord ? (coord.nome||coord.planner) : "", team:TEAM, logo:"logo.png",
+    name: dispName, activeOn:(p,day) => { const x = exitDn(p); return x == null || x >= day; }, exitOf: exitDn,
+    bucketOk: t => !ex.includes(t.bucket || "Sem bucket"),
+    bucketsTxt: on.length === bAll.length ? "todos" : ex.filter(b => bAll.includes(b)).length <= 3 ? "sem " + ex.filter(b => bAll.includes(b)).join(", ") : on.join(", "),
+    allTasks: DATA.tasks, texts:{}, day:c.day, project:c.project, person:c.person,
+    over: REP.over[pk] || {}, manual: REP.manual[pk] || [], snapshot: k === "fech" ? REP.snap[pk] : null };
+}
+function defaultText(k, c, f){
+  if(REP.tpl[f] != null) return REP.tpl[f];
+  if(TPL_DEFAULT[f] != null) return TPL_DEFAULT[f];
+  if(f === "objetivo") return R.autoObjetivo(R.planData(DATA.tasks, baseOpts(k, c)));
+  return "";
+}
+function textOf(k, c, f){ const t = REP.txt[perKey(k,c) + "|" + k]; return t && t[f] != null ? t[f] : defaultText(k, c, f); }
+function fullOpts(k, c){ const o = baseOpts(k, c); repOf(k).fields.forEach(([f]) => o.texts[f] = textOf(k, c, f)); return o; }
+function fileName(k, c){
+  const t = fromDn(TODAY), today = `${t.y}-${pad(t.m)}-${pad(t.d)}`, w = R.sicWeek(c.day);
+  return { plan:`Planejamento SIC - Semana ${pad(w.week)} - ${w.year}`, fech:`Fechamento SIC - Semana ${pad(w.week)} - ${w.year}`,
+    proj:`Projeto ${c.project} - ${today}`, indiv:`Individual ${dispName(c.person)} - ${MESES_C(c.day)}`, mensal:`Mensal SIC - ${MESES_C(c.day)}`, saude:`Checagem do Planner - ${today}` }[k];
+}
+
+/* gerar PDF ou Word */
+async function gerar(k, kind){
+  const c = curOf(k), o = fullOpts(k, c), r = repOf(k);
+  if(DATA.sample){ toast("Carregue a planilha do Planner antes de gerar relatórios."); return; }
+  const html = R[r.fn](DATA.tasks, o), name = fileName(k, c);
+  if(k === "plan"){ const d = R.planData(DATA.tasks, o); REP.snap[perKey(k,c)] = { ids: d.active.filter(x => !x.manual).map(x => x.id), manual: (o.manual||[]).length, day: TODAY }; saveRep(); }
+  if(kind === "pdf"){
+    closeExp();
+    $("#reportOut").innerHTML = `<style>${R.css()}</style>` + html;
+    const img = $("#reportOut img"); if(img && !img.complete) await new Promise(res => { img.onload = img.onerror = res; setTimeout(res, 1500); });
+    oldTitle = document.title; document.title = name; document.body.classList.add("print-report");
+    setTimeout(() => window.print(), 60);
+  } else {
+    try {
+      toast("Gerando o Word…");
+      const blob = await window.SIC_DOCX.build(html, { logo:"logo.png", title:name });
+      const file = name + ".docx";
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file; document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+      toast(`Word salvo em Downloads: ${file}`);
+    } catch(err){ console.error(err); toast("Não consegui gerar o Word. Tente de novo."); }
+  }
+}
+
+/* telas */
+let xView = null;
+function openExp(){ closeDetail(); $("#bk").open = false; xView = null; renderExp(); $("#exp").hidden = false; }
+function closeExp(){ $("#exp").hidden = true; }
+function renderExp(){
+  const foot = $("#xFoot");
+  if(!xView){
+    $("#xTitle").textContent = "Exportar"; $("#xBack").hidden = true; foot.hidden = true;
+    $("#xBody").innerHTML = `<div class="xl">
+      <div class="xr"><div><button class="nm" data-x="dash">Dashboard</button><div class="ds">Do jeito que está na tela, com os filtros escolhidos.</div></div><div class="bt"><button class="pdf" data-go="dash|pdf">PDF</button></div></div>
+      ${REPORTS.map(r => `<div class="xr"><div><button class="nm" data-x="${r.k}">${r.nome}</button><div class="ds">${r.desc}</div><button class="cfg" data-x="${r.k}">${recLabel(r.k)} · ajustar ›</button></div>
+        <div class="bt"><button class="pdf" data-go="${r.k}|pdf">PDF</button><button data-go="${r.k}|word">Word</button></div></div>`).join("")}
+    </div>`;
+    return;
+  }
+  const k = xView, r = repOf(k), c = curOf(k), pk = perKey(k, c);
+  $("#xTitle").textContent = r.nome; $("#xBack").hidden = false; foot.hidden = false;
+  foot.innerHTML = `<button data-go="${k}|word">Gerar Word</button><button class="pdf" data-go="${k}|pdf">Gerar PDF</button>`;
+  let h = "";
+  /* recorte */
+  if(r.rec === "semana"){
+    const wo = weekOptions(); const cur = R.sicWeek(c.day).start; if(!wo.includes(cur)) wo.push(cur); wo.sort((a,b)=>a-b);
+    h += `<div class="xsec"><h4>Semana</h4><select id="xWeek">${wo.slice().reverse().map(w => `<option value="${w}"${w===cur?" selected":""}>Semana ${isoWeek(w).week}/${isoWeek(w).year} · ${fmtShort(w)} a ${fmtShort(w+6)}${w===TODAY-((fromDn(TODAY).w+6)%7)?" (atual)":""}</option>`).join("")}</select></div>`;
+  }
+  if(r.rec === "mes" || r.rec === "pessoa"){
+    const ms = []; const ds = DATA.tasks.flatMap(t => [t.start, t.doneOn]).filter(v => v != null && v <= TODAY + 31);
+    for(let m = monthStart(Math.max(Math.min(...ds), TODAY - 730)); m <= monthStart(TODAY); m = monthStart(m + 32)) ms.push(m);
+    const sel = `<select id="xMonth">${ms.reverse().map(m => `<option value="${m}"${m===monthStart(c.day)?" selected":""}>${MESES_C(m)}</option>`).join("")}</select>`;
+    if(r.rec === "pessoa"){
+      const ppl = TEAM.filter(m => activeIn(m.planner, [monthStart(c.day), monthStart(c.day)]) || m.planner === c.person);
+      h += `<div class="xsec"><h4>Colaborador e mês</h4><div class="xrow2"><select id="xPerson">${ppl.map(m => `<option value="${esc(m.planner)}"${m.planner===c.person?" selected":""}>${esc(m.nome||m.planner)}</option>`).join("")}</select>${sel}</div></div>`;
+    } else h += `<div class="xsec"><h4>Mês</h4>${sel}</div>`;
+  }
+  if(r.rec === "projeto"){
+    const cnt = counts(DATA.tasks, t => t.labels).filter(([l]) => !/^(ATIVIDADES|ADM|REUNIÃO)$/.test(l));
+    h += `<div class="xsec"><h4>Projeto</h4><select id="xProj">${cnt.map(([l,n]) => `<option value="${esc(l)}"${l===c.project?" selected":""}>${esc(l)} (${n} tarefas)</option>`).join("")}</select></div>`;
+  }
+  /* buckets */
+  const ex = exOf(k), bAll = allBuckets();
+  h += `<div class="xsec"><h4>Buckets que entram neste relatório</h4><div class="xbk">${bAll.map((b,i) => `<label for="xb${i}"><input type="checkbox" id="xb${i}" data-xb="${esc(b)}"${ex.includes(b)?"":" checked"}>${esc(b)}</label>`).join("")}</div>
+    <p class="hint">A escolha fica salva para os próximos ${r.nome.toLowerCase().startsWith("relatório")?"":"relatórios de "}${r.nome.toLowerCase()}.</p></div>`;
+  /* ajustes do planejamento */
+  if(k === "plan"){
+    const d = R.planData(DATA.tasks, baseOpts(k, c)), ov = REP.over[pk] || {};
+    h += `<div class="xsec"><h4>Ajustes da coordenação nesta semana</h4><p class="hint">Mude a prioridade ou o marco, ou desmarque para tirar a demanda do relatório. O Planner não é alterado.</p>
+      <div class="adj">${d.rows.filter(x => !x.manual).sort((a,b) => (a.dueOrig??1e9)-(b.dueOrig??1e9)).map(x => { const chg = ov[x.id] && (ov[x.id].off || ov[x.id].prio || ov[x.id].marco != null);
+        return `<div class="adj-r${x.off?" off":""}${chg?" chg":""}"><input type="checkbox" data-aoff="${esc(x.id)}" aria-label="Incluir"${x.off?"":" checked"}>
+        <span class="n"><b>${esc(x.proj)}</b>${esc(x.name)}${x.due!==x.dueOrig?` <span style="color:var(--ink-3)">(Planner: ${fmtShort(x.dueOrig)})</span>`:""}</span>
+        <select data-aprio="${esc(x.id)}" aria-label="Prioridade">${["P1","P2","P3"].map(p => `<option${p===x.prio?" selected":""}>${p}</option>`).join("")}</select>
+        <input type="date" data-amarco="${esc(x.id)}" aria-label="Marco" value="${x.due!=null?isoD(x.due):""}"></div>`; }).join("") || `<p class="hint">Nenhuma demanda do Planner nesta semana com os buckets escolhidos.</p>`}</div>
+      ${Object.keys(ov).length?`<div class="xfa"><button data-areset="1">Desfazer todos os ajustes</button></div>`:""}
+      <h4 style="margin-top:6px">Itens fora do Planner</h4>
+      ${(REP.manual[pk]||[]).map((m,i) => `<div class="man">
+        <div class="xrow2"><input type="text" data-man="${i}|proj" placeholder="Projeto" value="${esc(m.proj||"")}"><input type="text" data-man="${i}|nome" placeholder="Entrega" value="${esc(m.nome||"")}">
+        <select data-man="${i}|prio">${["P1","P2","P3"].map(p => `<option${p===(m.prio||"P2")?" selected":""}>${p}</option>`).join("")}</select></div>
+        <div class="xrow2" style="grid-template-columns:minmax(0,1fr) 150px"><input type="text" data-man="${i}|resp" placeholder="Responsáveis (ex.: Rian / Luan)" value="${esc(m.resp||"")}"><input type="date" data-man="${i}|marco" value="${m.marco!=null?isoD(m.marco):""}"></div>
+        <input type="text" data-man="${i}|crit" placeholder="Meta / critério de aceite" value="${esc(m.crit||"")}">
+        <div class="xfa"><button data-mrm="${i}" style="color:var(--bad)">Remover item</button></div></div>`).join("")}
+      <div class="xfa"><button data-madd="1">+ Adicionar item fora do Planner</button></div></div>`;
+  }
+  /* textos */
+  r.fields.forEach(([f, label]) => {
+    const t = REP.txt[pk + "|" + k], edited = t && t[f] != null;
+    h += `<div class="xsec"><h4>${label}${edited?` <span style="color:var(--accent);text-transform:none;letter-spacing:0">· ajustado para este relatório</span>`:""}</h4>
+      <textarea id="xt_${f}" data-xt="${f}" rows="${f==="objetivo"||f==="riscos"?4:3}">${esc(textOf(k, c, f))}</textarea>
+      <div class="xfa"><button data-xreset="${f}">${f==="objetivo"?"Gerar de novo a partir do Planner":"Voltar ao texto padrão"}</button><button data-xsave="${f}">Salvar como padrão</button></div></div>`;
+  });
+  if(k === "fech" && !REP.snap[pk]) h += `<p class="hint" style="margin:0;font-size:12.5px;color:var(--ink-2)">Ainda não há Planejamento gerado para esta semana. O planejado × realizado vai usar o que já existia no Planner na segunda-feira.</p>`;
+  $("#xBody").innerHTML = `<div class="xl" style="gap:14px">${h}</div>`;
+}
+function recLabel(k){
+  const c = curOf(k), r = repOf(k);
+  if(r.rec === "semana"){ const w = R.sicWeek(c.day); return `Semana ${w.week} (${fmtShort(w.start)} a ${fmtShort(w.end)})`; }
+  if(r.rec === "mes") return MESES_C(c.day);
+  if(r.rec === "pessoa") return `${dispName(c.person)} · ${MESES_C(c.day)}`;
+  if(r.rec === "projeto") return c.project || "—";
+  return "Situação atual";
+}
+$("#expBtn").addEventListener("click", openExp);
+$("#xClose").onclick = closeExp; $("#xScrim").onclick = closeExp;
+$("#xBack").onclick = () => { xView = null; renderExp(); };
+$("#exp").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]"); if(go){ const [k, kind] = go.dataset.go.split("|"); if(k === "dash"){ closeExp(); setTimeout(printDashboard, 60); } else gerar(k, kind); return; }
+  const x = e.target.closest("[data-x]"); if(x){ if(x.dataset.x === "dash") return; xView = x.dataset.x; renderExp(); $("#xBody").scrollTop = 0; return; }
+  if(!xView) return;
+  const k = xView, c = curOf(k), pk = perKey(k, c), key = pk + "|" + k;
+  const rs = e.target.closest("[data-xreset]"); if(rs){ const f = rs.dataset.xreset; if(REP.txt[key]) delete REP.txt[key][f]; saveRep(); renderExp(); toast("Texto restaurado."); return; }
+  const sv = e.target.closest("[data-xsave]"); if(sv){ const f = sv.dataset.xsave; REP.tpl[f] = $("#xt_"+f).value; if(REP.txt[key]) delete REP.txt[key][f]; saveRep(); renderExp(); toast("Salvo como texto padrão."); return; }
+  if(e.target.closest("[data-areset]")){ delete REP.over[pk]; saveRep(); renderExp(); return; }
+  if(e.target.closest("[data-madd]")){ (REP.manual[pk] = REP.manual[pk] || []).push({prio:"P2"}); saveRep(); renderExp(); return; }
+  const mr = e.target.closest("[data-mrm]"); if(mr){ REP.manual[pk].splice(+mr.dataset.mrm, 1); if(!REP.manual[pk].length) delete REP.manual[pk]; saveRep(); renderExp(); return; }
+});
+let xtT;
+$("#exp").addEventListener("input", e => {
+  if(!xView) return; const k = xView, c = curOf(k), pk = perKey(k, c);
+  const t = e.target;
+  if(t.dataset.xt){ const key = pk + "|" + k; (REP.txt[key] = REP.txt[key] || {})[t.dataset.xt] = t.value; clearTimeout(xtT); xtT = setTimeout(saveRep, 300); }
+  if(t.dataset.man && t.type === "text"){ const [i, f] = t.dataset.man.split("|"); REP.manual[pk][+i][f] = t.value; clearTimeout(xtT); xtT = setTimeout(saveRep, 300); }
+});
+$("#exp").addEventListener("change", e => {
+  if(!xView) return; const k = xView, c = curOf(k), t = e.target;
+  if(t.id === "xWeek"){ c.day = +t.value; return renderExp(); }
+  if(t.id === "xMonth"){ c.day = +t.value; return renderExp(); }
+  if(t.id === "xPerson"){ c.person = t.value; return renderExp(); }
+  if(t.id === "xProj"){ c.project = t.value; return renderExp(); }
+  const pk = perKey(k, c);
+  if(t.dataset.xb != null){ const ex = new Set(exOf(k)); t.checked ? ex.delete(t.dataset.xb) : ex.add(t.dataset.xb); REP.ex[k] = [...ex]; saveRep(); return renderExp(); }
+  const ov = REP.over[pk] = REP.over[pk] || {};
+  const upd = (id, f) => { ov[id] = {...(ov[id]||{}), ...f}; Object.keys(ov[id]).forEach(x => ov[id][x] == null && delete ov[id][x]); if(!Object.keys(ov[id]).length) delete ov[id]; if(!Object.keys(ov).length) delete REP.over[pk]; saveRep(); renderExp(); };
+  const d0 = id => DATA.tasks.find(x => x.id === id);
+  if(t.dataset.aoff){ return upd(t.dataset.aoff, {off: t.checked ? null : true}); }
+  if(t.dataset.aprio){ const tk = d0(t.dataset.aprio); const orig = /urgente/i.test(tk.prio) ? "P1" : /importante/i.test(tk.prio) ? "P2" : "P3"; return upd(t.dataset.aprio, {prio: t.value === orig ? null : t.value}); }
+  if(t.dataset.amarco){ const tk = d0(t.dataset.amarco); const v = fromIso(t.value); return upd(t.dataset.amarco, {marco: v == null || v === tk.due ? null : v}); }
+  if(t.dataset.man){ const [i, f] = t.dataset.man.split("|"); REP.manual[pk][+i][f] = f === "marco" ? fromIso(t.value) : t.value; saveRep(); }
+});
+document.addEventListener("keydown", e => { if(e.key === "Escape" && !$("#exp").hidden) closeExp(); });
 
 function card(t){
   const s = state(t), [sl, , sc] = ST3[st3(t)];
@@ -839,7 +1147,7 @@ function card(t){
   const pr = t.prio && t.prio !== "Média" ? `<span class="prio-${esc(t.prio)}">${esc(t.prio)}</span>` : "";
   return `<button class="card st-${s}" data-id="${esc(t.id)}"><span class="stripe"></span>
     <span style="min-width:0"><span class="title">${esc(t.name)}</span>
-      <span class="meta"><span class="pill ${sc}">${sl}</span>${lateP}${t.labels.map(l=>`<span class="pill">${esc(l)}</span>`).join("")}${pr}<span>${esc(t.bucket)}</span>${ck}</span></span>
+      <span class="meta"><span class="pill ${sc}">${sl}</span>${t.localDone?`<span class="pill app">No app</span>`:""}${lateP}${t.labels.map(l=>`<span class="pill">${esc(l)}</span>`).join("")}${pr}<span>${esc(t.bucket)}</span>${ck}</span></span>
     <span class="faces">${t.people.slice(0,3).map(avatar).join("")}${t.people.length>3?`<span class="av">+${t.people.length-3}</span>`:""}</span></button>`;
 }
 function openDetail(id){
@@ -858,10 +1166,28 @@ function openDetail(id){
       <dt>Criada</dt><dd class="mono">${fmt(t.created)}${t.by?` · <span style="font-family:var(--f-body)">${esc(t.by)}</span>`:""}</dd>
     </dl>
     ${t.items.length?`<div class="sec"><h4>Lista de verificação · ${t.ckDone??0}/${t.ckTotal??t.items.length} concluídos</h4><ul class="check">${t.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`:""}
-    ${t.notes?`<div class="sec"><h4>Notas</h4><div class="notes">${esc(t.notes)}</div></div>`:""}`;
+    ${t.notes?`<div class="sec"><h4>Notas</h4><div class="notes">${esc(t.notes)}</div></div>`:""}
+    ${t.localDone ? `<div class="loc-box on"><b>Concluída no app em ${fmt(t.doneOn)}.</b><span style="font-size:13px">Lembre de concluir também no Planner. No Planner ela está como “${esc(t._orig.status)}”.</span>
+        <div class="loc-row"><button class="sec" data-undo="${esc(t.id)}">Desfazer conclusão</button></div></div>`
+      : !/conclu/i.test(t.status) && !DATA.sample ? `<div class="loc-box"><b>Concluir no app</b><span style="font-size:13px;color:var(--ink-2)">Conta como concluída no painel e nos relatórios. O Planner não é alterado.</span>
+        <div class="loc-row"><input type="date" id="locDate" value="${(d=>`${d.y}-${pad(d.m)}-${pad(d.d)}`)(fromDn(TODAY))}" aria-label="Data da conclusão"><button data-done="${esc(t.id)}">Concluir no app</button></div></div>` : ""}`;
   $("#detail").hidden = false; $("#dClose").focus();
 }
 const closeDetail = () => { $("#detail").hidden = true; };
+function showLocalList(){
+  const ll = localList();
+  $("#dTitle").textContent = "Concluídas só no app";
+  $("#dBody").innerHTML = `<p style="margin:0;font-size:13.5px;color:var(--ink-2)">Conclua estas tarefas também no Planner. Quando a próxima exportação já trouxer a tarefa concluída, ela sai desta lista sozinha.</p>
+    <div class="loc-list">${ll.map(t => `<div class="it"><span><b>${esc(t.name)}</b><small>${esc(t.labels.join(", ")||t.bucket)} · concluída no app em ${fmt(t.doneOn)} · ${esc(t.people.map(dispName).join(", "))}</small></span><button class="lnk-b" data-undo="${esc(t.id)}">Desfazer</button></div>`).join("") || `<div class="empty">Nenhuma.</div>`}</div>`;
+  $("#detail").hidden = false;
+}
+$("#dBody").addEventListener("click", e => {
+  const dn_ = e.target.closest("[data-done]"), un = e.target.closest("[data-undo]");
+  if(dn_){ const v = $("#locDate").value; const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v); const day = m ? dn(+m[1],+m[2],+m[3]) : TODAY;
+    LOC[dn_.dataset.done] = {doneOn: day, at: Date.now()}; saveLoc(); applyLocal(); render(); openDetail(dn_.dataset.done); toast("Concluída no app. Lembre de concluir no Planner."); }
+  if(un){ delete LOC[un.dataset.undo]; saveLoc(); applyLocal(); render(); if($("#dTitle").textContent === "Concluídas só no app") showLocalList(); else openDetail(un.dataset.undo); toast("Conclusão desfeita."); }
+});
+document.addEventListener("click", e => { if(e.target.closest("#localSee")) showLocalList(); });
 
 /* ---------- eventos ---------- */
 const set = (k,v) => { ui[k] = v; saveUi(); render(); };
@@ -897,9 +1223,10 @@ async function loadBuffer(buf, source){
   const d = fromPlanner(await readWorkbook(buf));
   if(!d.tasks.length) throw new Error("vazio");
   d.source = source; d.syncedAt = Date.now();
-  DATA = d; Object.assign(ui,{person:"",project:"",bucket:"",status:"",anchor:TODAY});
+  DATA = d; Object.assign(ui,{person:"",project:"",status:"",anchor:TODAY});
   try { localStorage.setItem(LS_DATA, JSON.stringify(d)); } catch(err){}
-  render(); toast(`${d.tasks.length} tarefas carregadas de “${d.plan}”.`);
+  const cleared = applyLocal();
+  render(); toast(`${d.tasks.length} tarefas carregadas de “${d.plan}”.` + (cleared ? ` ${cleared} concluída(s) no app já estão concluídas no Planner.` : ""));
 }
 $("#file").addEventListener("change", async e => {
   const f = e.target.files[0]; if(!f) return;
