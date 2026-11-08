@@ -1,7 +1,7 @@
 // Guarda o app no tablet para abrir sem internet.
 // Ao mudar qualquer arquivo do app, aumente o número da versão abaixo.
-const VERSAO = "painel-sic-v1";
-const ARQUIVOS = ["./", "index.html", "config.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
+const VERSAO = "painel-sic-v4";
+const ARQUIVOS = ["./", "index.html", "config.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "logo.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSAO).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
