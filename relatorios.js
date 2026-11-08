@@ -486,5 +486,47 @@ function ata(a, o){
   </div></div>`;
 }
 
-window.SIC_RELATORIOS = { ata, css, planejamento, planData, autoObjetivo, fechamento, projeto, colaborador, mensal, saude, sicWeek, monthRange };
+/* ---------- ENTREGA DE PROJETOS (LINK) ---------- */
+const LINK_GRUPOS = [
+  ["Documentação e estudos", ["ART","Levantamento topográfico","Sondagem / geotécnico","Especificações","Volume orçamentário","Aprovações"]],
+  ["Arquitetura e estrutura", ["Projeto de arquitetura","Projeto de acessibilidade","Estrutura de concreto","Estrutura metálica","Projeto de fundações","Compatibilização","Barita (proteção radiológica)"]],
+  ["Hidrossanitário e instalações especiais", ["Projeto hidráulico","Projeto sanitário","Projeto de águas pluviais","Projeto de incêndio","Projeto de irrigação","Projeto de gases medicinais","Projeto de gás GLP","Projeto de climatização","Projeto de canteiro"]],
+  ["Elétrica, dados e comunicação", ["Projeto de alimentadores","Projeto elétrico de baixa tensão","Projeto de subestação","Projeto de iluminação externa","Projeto de SPDA","Projeto fotovoltaico","Projeto de lógica","Projeto de telefonia","Projeto de sonorização"]],
+  ["Infraestrutura e urbanização", ["Rede de abastecimento","Rede de drenagem","Rede de esgoto","Projeto de terraplenagem","Projeto de pavimentação","Projeto geométrico","Projeto de sinalização","Projeto de urbanização"]]
+];
+function links(e, o){
+  const its = (e.itens||[]).filter(i => !i.na), na = (e.itens||[]).filter(i => i.na);
+  const nL = its.filter(i => i.link).length, nA = its.filter(i => i.ass).length, ok = its.filter(i => i.link && i.ass).length;
+  const pct = (a,b) => b ? Math.round(a/b*100) : 0;
+  const yes = `<b style="color:#0B4A7A">✓</b>`, no = `<span style="color:#A35400;font-weight:700">○ falta</span>`;
+  const groups = []; its.forEach(i => { let g = groups.find(x => x[0] === i.grupo); if(!g){ g = [i.grupo, []]; groups.push(g); } g[1].push(i); });
+  return `<div class="rel"><div class="pg">
+  <div class="hd"><img src="${o.logo||"logo.png"}" alt="Ribeiro Lopes">
+    <div class="co">Ribeiro Lopes Consultoria e Serviços Ltda<b>Entrega de Projetos · Link</b>Setor de Instalações Civis · SIC</div>
+    <div class="wk"><small>CONCLUÍDO</small><strong style="font-size:30px">${pct(ok, its.length)}%</strong><small>${ok} de ${its.length} itens</small></div></div>
+  <table style="margin-top:8px"><tbody>
+    <tr><td class="lb" style="width:16%">Empreendimento</td><td colspan="3"><b>${esc(e.nome||"—")}</b></td></tr>
+    <tr><td class="lb">Endereço</td><td colspan="3">${esc(e.endereco||"—")}</td></tr>
+    <tr><td class="lb">Área</td><td style="width:34%">${esc(e.area||"—")}</td><td class="lb" style="width:16%">Órgão</td><td>${esc(e.orgao||"—")}</td></tr>
+    <tr><td class="lb">Recebido em</td><td>${e.recebido!=null?fmt(e.recebido):"—"}</td><td class="lb">Entregue em</td><td>${e.entregue!=null?fmt(e.entregue):"—"}</td></tr>
+    <tr><td class="lb">Prioridade</td><td>${esc(e.prioridade||"—")}</td><td class="lb">Responsável</td><td>${esc(e.resp||o.coord||"—")}</td></tr>
+    ${e.url?`<tr><td class="lb">Link da pasta</td><td colspan="3" style="font-family:'IBM Plex Mono',monospace;font-size:9.5px">${esc(e.url)}</td></tr>`:""}
+  </tbody></table>
+  <div class="kp" style="grid-template-columns:repeat(4,1fr)">
+    <div><b>${its.length}</b><span>Projetos na entrega</span></div>
+    <div><b>${nL}</b><span>No link (${pct(nL,its.length)}%)</span><div class="meter"><i style="width:${pct(nL,its.length)}%;background:#5FB3E0"></i></div></div>
+    <div><b>${nA}</b><span>Assinados (${pct(nA,its.length)}%)</span><div class="meter"><i style="width:${pct(nA,its.length)}%"></i></div></div>
+    <div><b style="color:#A35400">${its.length - ok}</b><span>Com pendência</span></div>
+  </div>
+  ${groups.map(([g, xs], gi) => `<h2>${gi+1}. ${esc(g)}</h2>
+  <table><thead><tr><th>Projeto</th><th class="c" style="width:12%">No link</th><th class="c" style="width:12%">Assinado</th><th style="width:38%">Observação</th></tr></thead>
+  <tbody>${xs.map(i => `<tr><td${i.link&&i.ass?"":` style="font-weight:600"`}>${esc(i.nome)}</td><td class="c">${i.link?yes:no}</td><td class="c">${i.ass?yes:no}</td><td>${nl(i.obs)}</td></tr>`).join("")}</tbody></table>`).join("")}
+  ${na.length?`<table style="margin-top:8px"><tbody><tr><td class="lb" style="width:22%">Não se aplica</td><td class="muted">${na.map(i => esc(i.nome)).join(" · ")}</td></tr></tbody></table>`:""}
+  ${e.obs?`<h2>Observações gerais</h2><table><tr><td class="box" style="height:auto;min-height:40px">${nl(e.obs)}</td></tr></table>`:""}
+  <div class="sig"><div>${esc(e.resp||o.coord||"Coordenação SIC")}<br>Entregue por</div><div>Recebido por</div></div>
+  <div class="ft"><span>Coordenação SIC · Entrega de projetos</span><span>Gerada em ${o.now.toLocaleDateString("pt-BR")} às ${o.now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})} · ✓ feito · ○ falta</span></div>
+  </div></div>`;
+}
+
+window.SIC_RELATORIOS = { links, LINK_GRUPOS, ata, css, planejamento, planData, autoObjetivo, fechamento, projeto, colaborador, mensal, saude, sicWeek, monthRange };
 })();
