@@ -48,7 +48,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 button,select,input{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:none;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* topo */
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
@@ -221,7 +221,9 @@ main{padding-block:16px 40px;display:grid;gap:16px}
 .apptabs{display:inline-flex;background:var(--surface-2);border-radius:11px;padding:3px}
 .apptabs button{border:0;background:transparent;min-height:40px;padding:0 18px;border-radius:8px;font-weight:700;font-size:14.5px;color:var(--ink-2)}
 .apptabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
-.theme{margin-left:auto;display:inline-flex;border:1px solid var(--line);border-radius:10px;padding:3px}
+.app-act{margin-left:auto;display:flex;gap:8px;align-items:center}
+.app-act .btn{min-height:40px}
+.theme{display:inline-flex;border:1px solid var(--line);border-radius:10px;padding:3px}
 .theme button{border:0;background:none;min-height:34px;padding:0 10px;border-radius:7px;font-weight:600;font-size:12.5px;color:var(--ink-2)}
 .theme button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink)}
 body:not([data-tab="painel"]) .filters, body:not([data-tab="painel"]) main, body:not([data-tab="painel"]) .wrap > .sample{display:none!important}
@@ -397,8 +399,8 @@ body.cab-min header.top .wrap{display:flex;align-items:center;gap:8px;flex-wrap:
 body.cab-min .app-row{padding-top:0;flex:1 1 auto;gap:8px;min-width:0}
 body.cab-min .top-row{padding-block:0;gap:6px;flex-wrap:nowrap}
 body.cab-min .brand, body.cab-min .theme, body.cab-min .filters{display:none!important}
-body.cab-min .top-row .btn{min-height:40px;padding:0 10px}
-body.cab-min .top-row .btn .bt{display:none}
+body.cab-min header .btn{min-height:40px;padding:0 10px}
+body.cab-min header .btn .bt{display:none}
 body.cab-min .hdr-min .bt{display:none}
 body.cab-min .hdr-min{padding:0 10px}
 body.cab-min .apptabs button{min-height:36px;padding:0 12px}
@@ -409,6 +411,9 @@ body.cab-min .apptabs button{min-height:36px;padding:0 12px}
   .hdr-min .bt{display:none}
   .top-row .btn .bt{font-size:13px}
   body.cab-min .hdr-chip{max-width:100%;flex:1 1 100%;order:5}
+  .app-act .btn .bt, .theme .bt{display:none}
+  .app-act .btn{padding:0 12px}
+  .app-row{gap:8px}
   .brand h1{font-size:20px}
 }
 
@@ -551,9 +556,19 @@ body.cab-min .apptabs button{min-height:36px;padding:0 12px}
       </div>
       <button class="hdr-chip" id="hdrChip" hidden></button>
       <button class="hdr-min" id="hdrMin" aria-expanded="true" title="Minimizar o cabeçalho"><span class="ic">▴</span><span class="bt">Minimizar</span></button>
+      <div class="app-act">
+        <button class="btn" id="expBtn" title="Dashboard e relatórios em PDF ou Word">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg>
+          <span id="expLbl" class="bt">Exportar</span>
+        </button>
+        <button class="btn primary" id="driveBtn" title="Buscar a planilha mais recente no Google Drive">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
+          <span id="driveLbl" class="bt">Atualizar</span>
+        </button>
+      </div>
       <div class="theme" role="group" aria-label="Tema">
-        <button data-th="light" title="Tema claro">☀ Claro</button>
-        <button data-th="dark" title="Tema escuro">☾ Escuro</button>
+        <button data-th="light" title="Tema claro">☀<span class="bt"> Claro</span></button>
+        <button data-th="dark" title="Tema escuro">☾<span class="bt"> Escuro</span></button>
         <button data-th="auto" title="Seguir o tablet">Auto</button>
       </div>
     </div>
@@ -572,14 +587,6 @@ body.cab-min .apptabs button{min-height:36px;padding:0 12px}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
         <span class="bt">Arquivo</span>
       </label>
-      <button class="btn" id="expBtn" title="Dashboard e relatórios em PDF ou Word">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg>
-        <span id="expLbl" class="bt">Exportar</span>
-      </button>
-      <button class="btn primary" id="driveBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
-        <span id="driveLbl" class="bt">Atualizar do Drive</span>
-      </button>
       <input type="file" id="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
     </div>
     <div class="filters">
@@ -613,7 +620,7 @@ body.cab-min .apptabs button{min-height:36px;padding:0 12px}
 
 <div class="wrap">
   <div class="sample" id="sampleBanner" hidden>
-    <span><b>Dados de exemplo.</b> Salve o Excel exportado do Planner na pasta <b id="folderName">Painel SIC</b> do seu Google Drive e toque em <b>Atualizar do Drive</b>.</span>
+    <span><b>Dados de exemplo.</b> Salve o Excel exportado do Planner na pasta <b id="folderName">Painel SIC</b> do seu Google Drive e toque em <b>Atualizar</b>.</span>
   </div>
   <div class="sample local-b" id="localBanner" hidden></div>
   <div class="sample" id="configBanner" hidden>
@@ -2115,7 +2122,7 @@ async function syncDrive(){
   } catch(err){
     console.error(err);
     toast(/zip|formato|vazio/.test(err.message) ? "A planilha da pasta não está no formato do Planner." : err.message);
-  } finally { btn.disabled = false; $("#driveLbl").textContent = "Atualizar do Drive"; }
+  } finally { btn.disabled = false; $("#driveLbl").textContent = "Atualizar"; }
 }
 $("#driveBtn").addEventListener("click", syncDrive);
 

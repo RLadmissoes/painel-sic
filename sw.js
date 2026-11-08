@@ -1,6 +1,6 @@
 // Guarda o app no tablet para abrir sem internet.
 // Ao mudar qualquer arquivo do app, aumente o número da versão abaixo.
-const VERSAO = "painel-sic-v8";
+const VERSAO = "painel-sic-v9-1";
 const ARQUIVOS = ["./", "index.html", "config.js", "relatorios.js", "docx.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "logo.png"];
 
 self.addEventListener("install", e => {
