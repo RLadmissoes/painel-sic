@@ -30,7 +30,7 @@ function zip(files){ // [{name, data:Uint8Array}]
 
 /* ---------- XML do Word ---------- */
 const X = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const NAVY = "025D8A", INK = "10283A", MUTED = "6F8794", RED = "C0352B", LINE = "B9CCD5";
+const NAVY = "025D8A", INK = "10283A", MUTED = "6F8794", RED = "A35400", LINE = "B9CCD5";
 const PAGE_W = 10206; // largura útil em twips (A4 com margens de 1,5 cm)
 function rPr(st){
   return `<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>${st.b?"<w:b/>":""}${st.i?"<w:i/>":""}${st.caps?"<w:caps/>":""}${st.color?`<w:color w:val="${st.color}"/>`:""}${st.spacing?`<w:spacing w:val="${st.spacing}"/>`:""}<w:sz w:val="${st.sz||18}"/><w:szCs w:val="${st.sz||18}"/></w:rPr>`;
@@ -59,10 +59,10 @@ function inline(node, st){
   if(tag === "b" || tag === "strong") s2.b = true;
   if(cls.contains("late")) { s2.color = RED; s2.b = true; }
   if(cls.contains("muted")) s2.color = MUTED;
-  if(cls.contains("p1")) return run("P1", {...st, b:true, color:RED});
-  if(cls.contains("p2")) return run("P2", {...st, b:true, color:"A86200"});
+  if(cls.contains("p1")) return run("! P1", {...st, b:true, color:RED});
+  if(cls.contains("p2")) return run("P2", {...st, b:true, color:"025D8A"});
   if(cls.contains("p3")) return run("P3", {...st, b:true, color:NAVY});
-  if(cls.contains("tag")) return run(`  [${node.textContent.trim()}]`, {...st, sz:14, color: cls.contains("done") ? "1E7A4C" : cls.contains("lt") ? RED : NAVY, b:true});
+  if(cls.contains("tag")) return run(`  [${node.textContent.trim()}]`, {...st, sz:14, color: cls.contains("done") ? "0B4A7A" : cls.contains("lt") ? RED : NAVY, b:true});
   const col = toHex(styleOf(node, "color")); if(col) s2.color = col;
   return [...node.childNodes].map(n => inline(n, s2)).join("");
 }
@@ -81,6 +81,8 @@ function blocks(node, st, ctx){
 function block(el, st, ctx){
   const tag = el.tagName.toLowerCase(), cls = el.classList;
   if(el.dataset && el.dataset.chart){ try { return ctx.chart(JSON.parse(el.dataset.chart)); } catch(e){ return ""; } }
+  const im = el.querySelector && el.querySelector(":scope > img[src^='data:image/png']");
+  if(im && ctx.image) return ctx.image(im.getAttribute("src"), +im.dataset.w || 800, +im.dataset.h || 300);
   if(cls.contains("meter")) return "";
   if(cls.contains("hd")) return header(el, ctx);
   if(cls.contains("kp")) return kpis(el);
@@ -147,7 +149,7 @@ function kpis(el){
   return `<w:tbl><w:tblPr><w:tblW w:w="${PAGE_W}" w:type="dxa"/>${b}<w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${items.map(()=>`<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid><w:tr>${items.map(it => {
     const n = it.querySelector("b"), lbl = it.querySelector("span"), extra = it.querySelector("div");
     const col = n ? (toHex(styleOf(n, "color")) || NAVY) : NAVY;
-    return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/></w:tcPr>${para(run(n ? n.textContent.trim() : "", {sz:36, b:true, color:col}), {after:0})}${para(run(lbl ? lbl.textContent.trim().toUpperCase() : "", {sz:13, b:true, color:"45606F"}), {after:extra?0:40})}${extra?para(run(extra.textContent.trim(), {sz:13, b:true, color: toHex(styleOf(extra,"color")) || "1E7A4C"}), {after:40}):""}</w:tc>`; }).join("")}</w:tr></w:tbl>` + para("", {after:0, line:120});
+    return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/></w:tcPr>${para(run(n ? n.textContent.trim() : "", {sz:36, b:true, color:col}), {after:0})}${para(run(lbl ? lbl.textContent.trim().toUpperCase() : "", {sz:13, b:true, color:"45606F"}), {after:extra?0:40})}${extra?para(run(extra.textContent.trim(), {sz:13, b:true, color: toHex(styleOf(extra,"color")) || "0B4A7A"}), {after:40}):""}</w:tc>`; }).join("")}</w:tr></w:tbl>` + para("", {after:0, line:120});
 }
 function sig(el){
   const items = [...el.children]; const w = Math.floor(PAGE_W / items.length);
@@ -179,14 +181,14 @@ function drawChart(spec){
       g.fillStyle = r.c; g.globalAlpha = .85; g.fillRect(X(r.a), y+7, Math.max(5, X(r.b+1)-X(r.a)), 16); g.globalAlpha = 1;
       if(r.d != null){ g.fillStyle = "#10283A"; g.fillRect(X(r.d)-2, y+3, 4, 24); }
       g.strokeStyle = "#EEF4F6"; g.beginPath(); g.moveTo(0, y+rowH-.5); g.lineTo(W, y+rowH-.5); g.stroke(); });
-    g.fillStyle = "#6F8794"; g.font = "18px Arial"; g.fillText("Barra: início → prazo no Planner · traço escuro: conclusão · verde concluída, azul em aberto, vermelho vencida", 10, H-14);
+    g.fillStyle = "#6F8794"; g.font = "18px Arial"; g.fillText("Barra: início → prazo no Planner · traço escuro: conclusão · azul-escuro concluída, azul-claro em aberto, laranja vencida", 10, H-14);
     return {cv, wcm:18, hcm:18*H/W};
   }
   if(spec.type === "stack"){
     const H = 70; cv.width = W; cv.height = H; g.fillStyle = "#fff"; g.fillRect(0,0,W,H);
     const tot = spec.segs.reduce((a,x)=>a+x[0],0) || 1; let x = 0;
     spec.segs.forEach(([n,c,l]) => { const w = (W - 4*(spec.segs.length-1)) * n / tot; g.fillStyle = c; g.fillRect(x, 8, w, 54);
-      g.fillStyle = "#fff"; g.font = "bold 24px Arial"; const t = `${n} ${l}`; if(g.measureText(t).width < w - 12) g.fillText(t, x + 10, 44); x += w + 4; });
+      g.fillStyle = c === "#0B4A7A" ? "#fff" : "#10283A"; g.font = "bold 24px Arial"; const t = `${n} ${l}`; if(g.measureText(t).width < w - 12) g.fillText(t, x + 10, 44); x += w + 4; });
     return {cv, wcm:18, hcm:18*H/W};
   }
   return null;
@@ -204,7 +206,7 @@ async function build(html, opts={}){
   const addImg = (u8, wcm, hcm, name) => { const rid = "rImg" + (media.length+1); media.push({rid, name:`media/img${media.length+1}.png`, data:u8}); return drawing(rid, nid++, wcm, hcm, name); };
   let logo = "";
   if(opts.logo){ try { const r = await fetch(opts.logo); if(r.ok){ const u8 = new Uint8Array(await r.arrayBuffer()); logo = addImg(u8, 3.0, 3.0*323/512, "Logo"); } } catch(e){} }
-  const ctx = { logo, chart: spec => { const c = drawChart(spec); if(!c) return ""; const u8 = b64ToU8(c.cv.toDataURL("image/png").split(",")[1]); return para(addImg(u8, c.wcm, c.hcm, "Gráfico"), {before:80, after:80}); } };
+  const ctx = { logo, image: (src, w, h) => { const u8 = b64ToU8(src.split(",")[1]); const wcm = 18, hcm = Math.min(12, 18 * h / w); return para(addImg(u8, hcm < 18*h/w ? hcm * w / h : wcm, hcm, "Croqui"), {before:60, after:60, jc:"center"}); }, chart: spec => { const c = drawChart(spec); if(!c) return ""; const u8 = b64ToU8(c.cv.toDataURL("image/png").split(",")[1]); return para(addImg(u8, c.wcm, c.hcm, "Gráfico"), {before:80, after:80}); } };
   const pages = [...doc.querySelectorAll(".rel .pg")];
   const body = pages.map((pg, i) => (i ? `<w:p><w:r><w:br w:type="page"/></w:r></w:p>` : "") + blocks(pg, {sz:18, color:INK}, ctx)).join("");
   const enc = new TextEncoder();

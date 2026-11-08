@@ -52,11 +52,11 @@ function css(){ return `
 .rel h2+table thead{break-before:avoid}
 .rel .c{text-align:center}
 .rel .p1,.rel .p2,.rel .p3{display:inline-block;min-width:24px;text-align:center;border-radius:4px;font-weight:700;font-size:10px;padding:1px 4px}
-.rel .p1{background:#C0352B;color:#fff} .rel .p2{background:#A86200;color:#fff} .rel .p3{background:#DDEEF4;color:#025D8A}
-.rel .late{color:#C0352B;font-weight:600}
+.rel .p1{background:#E8890C;color:#10283A} .rel .p1::before{content:"! "} .rel .p2{background:#5FB3E0;color:#06212E} .rel .p3{background:#fff;color:#025D8A;box-shadow:inset 0 0 0 1px #025D8A}
+.rel .late{color:#A35400;font-weight:700}
 .rel .muted{color:#6F8794}
 .rel .tag{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:1px}
-.rel .tag.ns{background:#E0EBEF;color:#45606F} .rel .tag.prog{background:#DDEEF4;color:#025D8A} .rel .tag.done{background:#DDF0E5;color:#1E7A4C} .rel .tag.lt{background:#F8DEDB;color:#C0352B}
+.rel .tag.ns{background:#fff;color:#45606F;box-shadow:inset 0 0 0 1px #6F8794} .rel .tag.prog{background:#5FB3E0;color:#06212E} .rel .tag.done{background:#0B4A7A;color:#fff} .rel .tag.done::before{content:"✓ "} .rel .tag.lt{background:#E8890C;color:#10283A}
 .rel ul{margin:0;padding-left:14px} .rel li{margin:1px 0}
 .rel .obj{min-height:44px}
 .rel .box{height:70px}
@@ -65,7 +65,7 @@ function css(){ return `
 .rel .kp b{display:block;font-family:"Barlow Condensed",Arial Narrow,sans-serif;font-size:24px;line-height:1;color:#025D8A}
 .rel .kp span{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:#45606F;font-weight:600}
 .rel .meter{height:7px;background:#E0EBEF;border-radius:4px;overflow:hidden;margin-top:3px}
-.rel .meter i{display:block;height:100%;background:#1E7A4C}
+.rel .meter i{display:block;height:100%;background:#0B4A7A}
 .rel .ft{margin-top:12px;border-top:1px solid #B9CCD5;padding-top:5px;font-size:8.5px;color:#6F8794;display:flex;justify-content:space-between;gap:10px}
 .rel .sig{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:26px;font-size:9.5px;color:#45606F;text-align:center}
 .rel .sig div{border-top:1px solid #10283A;padding-top:4px}
@@ -203,10 +203,10 @@ function fechamento(tasks, o){
   const novas = snap ? work.filter(t => !snap.has(t.id) && t.created != null && (t.created >= wk.start || t.created >= o.snapshot.day)) : work.filter(t => t.created != null && t.created >= wk.start);
   const preDone = pre.filter(t => doneW.includes(t)), preProg = pre.filter(t => !isDone(t) && st3(t)==="prog"), preNs = pre.filter(t => !isDone(t) && st3(t)==="ns"), preOld = pre.filter(t => isDone(t) && !doneW.includes(t));
   const ds = delayStats(doneW.filter(t => !ROUTINE.test(t.bucket||"")));
-  const seg = (n, tot, col, lbl) => n ? `<i style="flex:${n};background:${col};color:#fff;font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">${n} ${lbl}</i>` : "";
+  const seg = (n, tot, col, lbl) => n ? `<i style="flex:${n};background:${col};color:${col==="#0B4A7A"?"#fff":"#10283A"};font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">${n} ${lbl}</i>` : "";
   const pvr = `<h2>1. Planejado × realizado</h2>
   <table><tbody><tr><td class="lb" style="width:22%">Planejadas<br><span class="muted" style="font-weight:400">${pre.length} no início da semana</span></td><td>
-    <div data-chart="${esc(JSON.stringify({type:"stack", segs:[[preDone.length,"#1E7A4C","entregues"],[preProg.length,"#025D8A","em andamento"],[preNs.length,"#6F8794","não iniciadas"],[preOld.length,"#9DB3BF","já concluídas antes"]].filter(x=>x[0])}))}" style="display:flex;gap:2px;height:20px;border-radius:4px;overflow:hidden">${seg(preDone.length,pre.length,"#1E7A4C","entregues")}${seg(preProg.length,pre.length,"#025D8A","em andamento")}${seg(preNs.length,pre.length,"#6F8794","não iniciadas")}${seg(preOld.length,pre.length,"#9DB3BF","já concluídas antes")}</div>
+    <div data-chart="${esc(JSON.stringify({type:"stack", segs:[[preDone.length,"#0B4A7A","entregues"],[preProg.length,"#5FB3E0","em andamento"],[preNs.length,"#C9D6DE","não iniciadas"],[preOld.length,"#9DB3BF","já concluídas antes"]].filter(x=>x[0])}))}" style="display:flex;gap:2px;height:20px;border-radius:4px;overflow:hidden">${seg(preDone.length,pre.length,"#0B4A7A","entregues")}${seg(preProg.length,pre.length,"#5FB3E0","em andamento")}${seg(preNs.length,pre.length,"#C9D6DE","não iniciadas")}${seg(preOld.length,pre.length,"#9DB3BF","já concluídas antes")}</div>
     <div style="margin-top:4px"><b>${pct(preDone.length, pre.length - preOld.length)}%</b> das planejadas em aberto foram entregues na semana.</div></td></tr>
   <tr><td class="lb">Não planejadas<br><span class="muted" style="font-weight:400">criadas durante a semana</span></td><td>${novas.length ? novas.map(t => `${esc(t.name)} <span class="muted">(${esc(proj(t))}, criada ${fmtS(t.created)})</span>${isDone(t)?`<span class="tag done">Concluída</span>`:""}`).join("; ") : "Nenhuma demanda nova entrou na semana."}</td></tr></tbody></table>
   <div class="muted" style="font-size:8.5px;margin-top:3px">${snap ? `Planejadas = demandas do Planejamento da semana gerado em ${fmt(o.snapshot.day)}${o.snapshot.manual?` (+ ${o.snapshot.manual} item(ns) fora do Planner, não contados aqui)`:""}.` : `Sem Planejamento salvo para esta semana: "planejada" = já existia no Planner antes de ${fmtS(wk.start)}.`}</div>`;
@@ -216,11 +216,11 @@ function fechamento(tasks, o){
   ${header(o, "Fechamento Semanal", wk)}
   <div class="kp" style="grid-template-columns:repeat(6,1fr)">
     <div><b>${planned.length}</b><span>Previstas</span></div>
-    <div><b style="color:#1E7A4C">${doneW.length}</b><span>Concluídas na semana</span></div>
+    <div><b style="color:#0B4A7A">${doneW.length}</b><span>Concluídas na semana</span></div>
     <div><b>${pct(doneW.length, planned.length)}%</b><span>Taxa de conclusão</span></div>
     <div><b>${novas.length}</b><span>Não planejadas</span></div>
-    <div><b style="color:${ds.mean?"#A86200":"#1E7A4C"}">${dTxt(ds.mean)}</b><span>Atraso médio (${ds.late}/${ds.n} atrasadas)</span></div>
-    <div><b style="color:#C0352B">${latePend.length}</b><span>Vencidas em aberto</span></div>
+    <div><b style="color:${ds.mean?"#45606F":"#0B4A7A"}">${dTxt(ds.mean)}</b><span>Atraso médio (${ds.late}/${ds.n} atrasadas)</span></div>
+    <div><b style="color:#A35400">${latePend.length}</b><span>Vencidas em aberto</span></div>
   </div>
   ${pvr}
   <h2>2. Indicadores por projeto</h2><table>${hdr}<tbody>${projRows}</tbody></table>
@@ -279,26 +279,26 @@ function projeto(tasks, o){
   const ets = ETAPAS.map(x=>x[1]).filter(x=>etUsed.has(x)), dss = DISC.map(x=>x[1]).filter(x=>dsUsed.has(x));
   const matrix = ets.length && dss.length ? `<h2>1. Situação por disciplina e etapa</h2><table><thead><tr><th style="width:20%">Disciplina</th>${ets.map(e=>`<th class="c">${esc(e)}</th>`).join("")}</tr></thead><tbody>
     ${dss.map(d => `<tr><td class="lb">${esc(d)}</td>${ets.map(e => { const t = cells.get(e+"|"+d); if(!t) return `<td class="c muted">—</td>`;
-      return isDone(t) ? `<td class="c" style="background:#EAF6EF"><b style="color:#1E7A4C">✓ ${fmtS(t.doneOn)}</b></td>` : `<td class="c" style="background:${t.due!=null&&t.due<ref?"#FBE9E7":"#EEF6FA"}"><span class="tag ${st3(t)}" style="margin:0">${ST[st3(t)]}</span><br>prazo ${fmtS(t.due)}</td>`; }).join("")}</tr>`).join("")}</tbody></table>` : "";
+      return isDone(t) ? `<td class="c" style="background:#DCE8F2"><b style="color:#0B4A7A">✓ ${fmtS(t.doneOn)}</b></td>` : `<td class="c" style="background:${t.due!=null&&t.due<ref?"#FBE6CC":"#EAF4FB"}"><span class="tag ${st3(t)}" style="margin:0">${ST[st3(t)]}</span><br>prazo ${fmtS(t.due)}</td>`; }).join("")}</tr>`).join("")}</tbody></table>` : "";
   // linha do tempo
   const s0 = Math.min(...ts.map(t=>t.start??t.due).filter(v=>v!=null)), e0 = Math.max(...ts.map(t=>Math.max(t.due??0,t.doneOn??0)));
   const months = []; { let a = fromDn(s0); let m = dn(a.y,a.m,1); while(m <= e0){ months.push(m); const b = fromDn(m); m = dn(b.m===12?b.y+1:b.y, b.m===12?1:b.m+1, 1); } }
   const X = v => ((v - s0) / Math.max(1, e0 - s0) * 100).toFixed(2);
   const gd = esc(JSON.stringify({type:"gantt", s0, e0, months: months.map(m => ({x:m, l:`${MES[fromDn(m).m-1].slice(0,3)}/${String(fromDn(m).y).slice(2)}`})),
-    rows: ts.map(t => { const a = t.start??t.due; return {n:t.name, a, b:Math.max(t.due??a,a), d:t.doneOn, c: isDone(t) ? "#1E7A4C" : (t.due!=null&&t.due<ref ? "#C0352B" : "#025D8A")}; })}));
+    rows: ts.map(t => { const a = t.start??t.due; return {n:t.name, a, b:Math.max(t.due??a,a), d:t.doneOn, c: isDone(t) ? "#0B4A7A" : (t.due!=null&&t.due<ref ? "#E8890C" : "#5FB3E0")}; })}));
   const tl = `<h2>${matrix?"2":"1"}. Linha do tempo</h2><div data-chart="${gd}" style="border:1px solid #B9CCD5;padding:6px 8px">
     <div style="position:relative;height:14px;margin-left:34%;font-size:8.5px;color:#6F8794">${months.map(m => `<span style="position:absolute;left:${Math.max(0,X(m))}%;border-left:1px solid #B9CCD5;padding-left:3px">${MES[fromDn(m).m-1].slice(0,3)}/${String(fromDn(m).y).slice(2)}</span>`).join("")}</div>
-    ${ts.map(t => { const a = t.start??t.due, b = Math.max(t.due??a, a); const col = isDone(t) ? "#1E7A4C" : (t.due!=null&&t.due<ref ? "#C0352B" : "#025D8A");
+    ${ts.map(t => { const a = t.start??t.due, b = Math.max(t.due??a, a); const col = isDone(t) ? "#0B4A7A" : (t.due!=null&&t.due<ref ? "#E8890C" : "#5FB3E0");
       return `<div style="display:grid;grid-template-columns:34% 1fr;align-items:center;font-size:9px;min-height:15px;border-top:1px solid #EEF4F6;break-inside:avoid">
         <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:6px">${esc(t.name)}</span>
         <span style="position:relative;height:9px">${months.map(m=>`<i style="position:absolute;left:${X(m)}%;top:-3px;bottom:-3px;border-left:1px dotted #D5E2E8"></i>`).join("")}
           <i style="position:absolute;left:${X(a)}%;width:calc(${X(b+1)}% - ${X(a)}%);min-width:3px;top:0;bottom:0;background:${col};opacity:.85;border-radius:2px"></i>
           ${t.doneOn!=null?`<i style="position:absolute;left:${X(t.doneOn)}%;top:-2px;bottom:-2px;width:2px;background:#10283A" title="concluída ${fmtS(t.doneOn)}"></i>`:""}</span></div>`; }).join("")}
-    <div class="muted" style="font-size:8.5px;margin-top:5px">Barra: início → prazo no Planner · traço escuro: data de conclusão · verde concluída, azul em aberto, vermelho vencida</div></div>`;
+    <div class="muted" style="font-size:8.5px;margin-top:5px">Barra: início → prazo no Planner · traço escuro: data de conclusão · azul-escuro concluída, azul-claro em aberto, laranja vencida</div></div>`;
   const ppl = new Map(); ts.forEach(t => t.people.forEach(p => ppl.set(p, (ppl.get(p)||0)+1)));
   return `<div class="rel"><div class="pg">
   ${hdrMini(o, "Relatório de Projeto", o.project, "PROJETO", `${fmt(s0)} a ${fmt(e0)} · Setor de Instalações Civis`)}
-  ${kpis([[ts.length,"Tarefas"],[done.length,"Concluídas","#1E7A4C"],[open.length,"Em aberto"],[late.length,"Vencidas","#C0352B"],[pctN(done.length,ts.length)+"%","Concluído"],[done.length?pctN(onT,done.length)+"%":"—","Entregues no prazo"]])}
+  ${kpis([[ts.length,"Tarefas"],[done.length,"Concluídas","#0B4A7A"],[open.length,"Em aberto"],[late.length,"Vencidas","#A35400"],[pctN(done.length,ts.length)+"%","Concluído"],[done.length?pctN(onT,done.length)+"%":"—","Entregues no prazo"]])}
   ${matrix}${tl}
   <h2>${matrix?"3":"2"}. Tempo de execução por etapa</h2>${leadBlock(ts, -1e9, 1e9, t => findIn(t.name, ETAPAS), "Etapa")}
   <h2>${matrix?"4":"3"}. Equipe envolvida</h2><table><tbody><tr>${[...ppl].sort((a,b)=>b[1]-a[1]).map(([p,n]) => `<td class="c"><b>${esc(o.name(p))}</b><br><span class="muted">${n} tarefa${n>1?"s":""}</span></td>`).join("")}</tr></tbody></table>
@@ -320,7 +320,7 @@ function colaborador(tasks, o){
   const byP = new Map(); inM.forEach(t => { const k = proj(t); const v = byP.get(k)||{n:0,d:0}; v.n++; if(doneM.includes(t)) v.d++; byP.set(k,v); });
   return `<div class="rel"><div class="pg">
   ${hdrMini(o, "Relatório Individual", o.name(o.person), "COLABORADOR", `${lbl[0].toUpperCase()+lbl.slice(1)} · ${fmt(s)} a ${fmt(e)}`)}
-  ${kpis([[inM.length,"Tarefas no mês"],[doneM.length,"Concluídas","#1E7A4C"],[dueM.length?pctN(onT,dueM.length)+"%":"—","No prazo"],[open.length,"Em aberto"],[late.length,"Vencidas","#C0352B"],[dTxt(delayStats(doneM).mean),"Atraso médio","#A86200"]])}
+  ${kpis([[inM.length,"Tarefas no mês"],[doneM.length,"Concluídas","#0B4A7A"],[dueM.length?pctN(onT,dueM.length)+"%":"—","No prazo"],[open.length,"Em aberto"],[late.length,"Vencidas","#A35400"],[dTxt(delayStats(doneM).mean),"Atraso médio","#45606F"]])}
   ${weekBars(doneM, s, e, "Concluídas por semana")}
   <h2>1. Projetos atendidos</h2><table><thead><tr><th>Projeto</th><th class="c" style="width:14%">Tarefas</th><th class="c" style="width:14%">Concluídas</th><th style="width:30%">% concluído</th></tr></thead><tbody>
   ${[...byP].sort((a,b)=>b[1].n-a[1].n).map(([p,v]) => `<tr><td class="lb">${esc(p)}</td><td class="c">${v.n}</td><td class="c">${v.d}</td><td>${pctN(v.d,v.n)}%<div class="meter"><i style="width:${pctN(v.d,v.n)}%"></i></div></td></tr>`).join("")}</tbody></table>
@@ -359,7 +359,7 @@ function discRisk(tasks, o, s, e){
     const active = [...v.keys()].filter(p => o.activeOn(p, e)).length;
     const risk = active <= 1 || top/tot >= .8;
     return `<tr><td class="lb">${esc(d)}</td>${ppl.map(p => { const n = v.get(p)||0; return `<td class="c" style="${n?`background:rgba(2,93,138,${(.12+.6*n/top).toFixed(2)});color:${n/top>.6?"#fff":"#10283A"};font-weight:600`:""}">${n||""}</td>`; }).join("")}
-      <td>${risk?`<span class="late">Alto</span> · ${esc(o.name(who))} concentra ${Math.round(top/tot*100)}%`:`<span style="color:#1E7A4C;font-weight:600">Baixo</span> · ${active} pessoas`}</td></tr>`; }).join("");
+      <td>${risk?`<span class="late">Alto</span> · ${esc(o.name(who))} concentra ${Math.round(top/tot*100)}%`:`<span style="color:#0B4A7A;font-weight:600">Baixo</span> · ${active} pessoas`}</td></tr>`; }).join("");
   return `<table><thead><tr><th style="width:20%">Disciplina</th>${ppl.map(p=>`<th class="c">${esc(o.name(p).split(" ")[0])}</th>`).join("")}<th style="width:28%">Risco de dependência</th></tr></thead><tbody>${rows}</tbody></table>
   <div class="muted" style="font-size:8.5px;margin-top:3px">Nº de tarefas por pessoa, identificadas pela sigla da disciplina no nome (HID, SAN, INC, LEV…). Risco alto: uma pessoa ativa ou ≥ 80% com a mesma pessoa.</div>`;
 }
@@ -397,7 +397,7 @@ function mensal(tasks, o){
     const d = inM.filter(t => t.doneOn!=null && t.doneOn>=a && t.doneOn<=b); const dd = d.filter(t=>t.due!=null);
     return {inM, d, onT: dd.filter(t=>t.doneOn<=t.due).length, dd: dd.length, late: dd.filter(t=>t.doneOn>t.due)}; };
   const A = stat(s,e), B = stat(ps,pe);
-  const delta = (x,y) => { const v = x-y; return `<div style="font-size:9px;font-weight:600;color:${v>=0?"#1E7A4C":"#C0352B"}">${v>=0?"▲":"▼"} ${Math.abs(v)} vs ${plbl.split(" ")[0]}</div>`; };
+  const delta = (x,y) => { const v = x-y; return `<div style="font-size:9px;font-weight:600;color:${v>=0?"#0B4A7A":"#A35400"}">${v>=0?"▲":"▼"} ${Math.abs(v)} vs ${plbl.split(" ")[0]}</div>`; };
   const openEnd = scope.filter(t => !isDone(t) && (t.start??t.due??0) <= e);
   const k = (n,l,x,c) => `<div><b${c?` style="color:${c}"`:""}>${n}</b><span>${l}</span>${x||""}</div>`;
   const byP = new Map(); A.inM.forEach(t => { const kk = proj(t); const v = byP.get(kk)||{n:0,d:0}; v.n++; if(A.d.includes(t)) v.d++; byP.set(kk,v); });
@@ -406,10 +406,10 @@ function mensal(tasks, o){
   return `<div class="rel"><div class="pg">
   ${hdrMini(o, "Relatório Mensal do Setor", lbl.split(" ")[0].toUpperCase(), String(fromDn(s).y), `${fmt(s)} a ${fmt(e)} · Setor de Instalações Civis`)}
   <div class="kp" style="grid-template-columns:repeat(4,1fr)">
-    ${k(A.d.length,"Entregas concluídas",delta(A.d.length,B.d.length),"#1E7A4C")}
+    ${k(A.d.length,"Entregas concluídas",delta(A.d.length,B.d.length),"#0B4A7A")}
     ${k(A.dd?pctN(A.onT,A.dd)+"%":"—","Entregues no prazo",A.dd&&B.dd?delta(pctN(A.onT,A.dd),pctN(B.onT,B.dd)).replace(/(\d+) vs/,"$1 p.p. vs"):"")}
-    ${k(dTxt(delayStats(A.d).mean),"Atraso médio das atrasadas","","#A86200")}
-    ${k(openEnd.length,"Em aberto no fim do mês","", "#A86200")}
+    ${k(dTxt(delayStats(A.d).mean),"Atraso médio das atrasadas","","#45606F")}
+    ${k(openEnd.length,"Em aberto no fim do mês","", "#45606F")}
   </div>
   ${weekBars(A.d, s, e, "Entregas concluídas por semana")}
   <h2>1. Por projeto</h2><table><thead><tr><th>Projeto</th><th class="c" style="width:13%">Tarefas</th><th class="c" style="width:13%">Concluídas</th><th style="width:30%">% concluído</th></tr></thead><tbody>
@@ -443,7 +443,7 @@ function saude(tasks, o){
   const score = Math.max(0, 100 - Math.round((semCrit.length + semResp.length*2 + semPrazo.length*2 + naoIni.length*2 + velha.length) / Math.max(1, open.length) * 50));
   return `<div class="rel"><div class="pg">
   ${hdrMini(o, "Checagem do Planner", score + "%", "QUALIDADE", "Tarefas de projeto · referência " + fmt(ref))}
-  ${kpis([[open.length,"Tarefas abertas"],[semCrit.length,"Sem critério","#A86200"],[semResp.length,"Sem responsável","#C0352B"],[naoIni.length,"Vencidas sem iniciar","#C0352B"],[velha.length,"Vencidas há +30 dias","#C0352B"],[doneNoCk.length,"Concluídas c/ lista incompleta"]])}
+  ${kpis([[open.length,"Tarefas abertas"],[semCrit.length,"Sem critério","#45606F"],[semResp.length,"Sem responsável","#A35400"],[naoIni.length,"Vencidas sem iniciar","#A35400"],[velha.length,"Vencidas há +30 dias","#A35400"],[doneNoCk.length,"Concluídas c/ lista incompleta"]])}
   <div class="muted" style="font-size:9px;margin-top:5px">Os relatórios saem melhores quando cada tarefa tem responsável, prazo atualizado e lista de verificação (que vira o critério de aceite).</div>
   <h2>1. Vencidas e ainda "Não iniciada"</h2>${lst(naoIni, t => `<span class="late">${fmtS(t.due)}</span>`)}
   <h2>2. Vencidas há mais de 30 dias (sem contar órgão externo)</h2>${lst(velha, t => `<span class="late">${ref - t.due} d</span>`)}
@@ -454,5 +454,37 @@ function saude(tasks, o){
   </div></div>`;
 }
 
-window.SIC_RELATORIOS = { css, planejamento, planData, autoObjetivo, fechamento, projeto, colaborador, mensal, saude, sicWeek, monthRange };
+/* ---------- ATA DE REUNIÃO ---------- */
+function ata(a, o){
+  const d = a.data != null ? a.data : Math.floor(Date.now()/864e5);
+  const parts = (a.participantes||[]);
+  const acoes = (a.acoes||[]).filter(x => (x.oque||"").trim());
+  const pauta = (a.pauta||[]).filter(x => (x||"").trim());
+  const hdr = `<div class="hd"><img src="${o.logo||"logo.png"}" alt="Ribeiro Lopes">
+    <div class="co">Ribeiro Lopes Consultoria e Serviços Ltda<b>Ata de Reunião</b>Setor de Instalações Civis · SIC</div>
+    <div class="wk"><small>ATA Nº</small><strong style="font-size:30px">${esc(a.numero||"—")}</strong><small>${fmt(d)}</small></div></div>`;
+  return `<div class="rel"><div class="pg">${hdr}
+  <table style="margin-top:8px"><tbody>
+    <tr><td class="lb" style="width:16%">Data</td><td style="width:34%">${fmt(d)} · ${["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"][fromDn(d).w]}</td><td class="lb" style="width:16%">Horário</td><td>${esc(a.inicio||"—")}${a.fim?` às ${esc(a.fim)}`:""}</td></tr>
+    <tr><td class="lb">Projeto / cliente</td><td>${esc(a.projeto||"—")}</td><td class="lb">Local</td><td>${esc(a.local||"—")}</td></tr>
+    <tr><td class="lb">Tipo</td><td>${esc(a.tipo||"—")}</td><td class="lb">Redigida por</td><td>${esc(a.redator||o.coord||"—")}</td></tr>
+  </tbody></table>
+  <h2>1. Participantes</h2>
+  <table><thead><tr><th style="width:36%">Nome</th><th style="width:34%">Empresa / função</th><th>Assinatura</th></tr></thead>
+  <tbody>${parts.map(p => `<tr><td>${esc(p.nome)}</td><td>${esc(p.funcao||"")}</td><td style="height:22px"></td></tr>`).join("") || `<tr><td colspan="3" class="muted">—</td></tr>`}</tbody></table>
+  <h2>2. Pauta</h2>
+  <table><tbody>${pauta.map((p,i) => `<tr><td class="lb c" style="width:7%">${i+1}</td><td>${nl(p)}</td></tr>`).join("") || `<tr><td class="muted">—</td></tr>`}</tbody></table>
+  <h2>3. Assuntos discutidos e decisões</h2>
+  <table><tr><td class="box" style="height:auto;min-height:70px">${nl(a.discussao)}</td></tr></table>
+  <h2>4. Ações e encaminhamentos</h2>
+  <table><thead><tr><th style="width:6%">#</th><th>O que fazer</th><th style="width:20%">Responsável</th><th style="width:12%">Prazo</th><th style="width:16%">Projeto</th></tr></thead>
+  <tbody>${acoes.map((x,i) => `<tr><td class="c">${i+1}</td><td>${nl(x.oque)}</td><td>${esc(x.resp||"—")}</td><td class="c">${x.prazo!=null?fmtS(x.prazo):"—"}</td><td>${esc(x.projeto||a.projeto||"—")}</td></tr>`).join("") || `<tr><td colspan="5" class="muted">Sem ações registradas.</td></tr>`}</tbody></table>
+  ${a.croqui?`<h2>5. Croqui / anotações</h2><div style="border:1px solid #B9CCD5;padding:6px;text-align:center"><img src="${a.croqui}" alt="Croqui" data-w="${a.croquiW||800}" data-h="${a.croquiH||230}" style="max-width:100%;max-height:300px"></div>`:""}
+  <table style="margin-top:8px"><tbody><tr><td class="lb" style="width:22%">Próxima reunião</td><td>${a.proxima!=null?fmt(a.proxima):"A definir"}${a.proximaObs?` · ${esc(a.proximaObs)}`:""}</td></tr></tbody></table>
+  <div class="sig"><div>${esc(a.redator||o.coord||"Coordenação SIC")}<br>Redator</div><div>Aprovação dos participantes</div></div>
+  <div class="ft"><span>Coordenação SIC · Ata de reunião ${esc(a.numero||"")}</span><span>Gerada em ${o.now.toLocaleDateString("pt-BR")} às ${o.now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}</span></div>
+  </div></div>`;
+}
+
+window.SIC_RELATORIOS = { ata, css, planejamento, planData, autoObjetivo, fechamento, projeto, colaborador, mensal, saude, sicWeek, monthRange };
 })();
