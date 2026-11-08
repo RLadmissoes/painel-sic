@@ -388,6 +388,30 @@ body[data-tab="atas"] #expBtn, body[data-tab="links"] #expBtn{display:none!impor
 .sync-b small{font-size:11.5px;color:var(--ink-3);text-align:center}
 @media (max-width:900px){.lk-row{grid-template-columns:minmax(0,1fr) 104px 104px 40px}.lk-row > input{grid-column:1 / -1}.lk-row.h{display:none}.lk-prog{grid-template-columns:minmax(0,1fr)}.lk-add{grid-template-columns:minmax(0,1fr)}}
 
+/* cabeçalho minimizável */
+.apptabs .sh{display:none}
+.hdr-min{min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-weight:600;font-size:13px;padding:0 12px;display:inline-flex;align-items:center;gap:6px}
+.hdr-min .ic{font-size:12px;color:var(--accent)}
+.hdr-chip{min-height:36px;border:1px solid var(--accent);border-radius:18px;background:var(--accent-soft);color:var(--ink);font-weight:600;font-size:12.5px;padding:0 12px;max-width:min(52vw,520px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.cab-min header.top .wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-block:6px}
+body.cab-min .app-row{padding-top:0;flex:1 1 auto;gap:8px;min-width:0}
+body.cab-min .top-row{padding-block:0;gap:6px;flex-wrap:nowrap}
+body.cab-min .brand, body.cab-min .theme, body.cab-min .filters{display:none!important}
+body.cab-min .top-row .btn{min-height:40px;padding:0 10px}
+body.cab-min .top-row .btn .bt{display:none}
+body.cab-min .hdr-min .bt{display:none}
+body.cab-min .hdr-min{padding:0 10px}
+body.cab-min .apptabs button{min-height:36px;padding:0 12px}
+@media (max-width:640px){
+  .apptabs button{padding:0 11px;font-size:13.5px}
+  .apptabs .lg{display:none} .apptabs .sh{display:inline}
+  .theme button{padding:0 7px}
+  .hdr-min .bt{display:none}
+  .top-row .btn .bt{font-size:13px}
+  body.cab-min .hdr-chip{max-width:100%;flex:1 1 100%;order:5}
+  .brand h1{font-size:20px}
+}
+
 /* concluídas no app */
 .local-b{background:var(--accent-soft);border-color:var(--accent)}
 .local-b b{color:var(--accent)!important}
@@ -521,10 +545,12 @@ body[data-tab="atas"] #expBtn, body[data-tab="links"] #expBtn{display:none!impor
     <div class="app-row">
       <div class="apptabs" role="tablist" aria-label="Telas">
         <button role="tab" data-tab="painel">Painel</button>
-        <button role="tab" data-tab="crono">Cronograma</button>
+        <button role="tab" data-tab="crono"><span class="lg">Cronograma</span><span class="sh">Crono</span></button>
         <button role="tab" data-tab="atas">Atas</button>
         <button role="tab" data-tab="links">Links</button>
       </div>
+      <button class="hdr-chip" id="hdrChip" hidden></button>
+      <button class="hdr-min" id="hdrMin" aria-expanded="true" title="Minimizar o cabeçalho"><span class="ic">▴</span><span class="bt">Minimizar</span></button>
       <div class="theme" role="group" aria-label="Tema">
         <button data-th="light" title="Tema claro">☀ Claro</button>
         <button data-th="dark" title="Tema escuro">☾ Escuro</button>
@@ -540,19 +566,19 @@ body[data-tab="atas"] #expBtn, body[data-tab="links"] #expBtn{display:none!impor
       </div>
       <button class="btn" id="teamBtn" title="Coordenador e colaboradores">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>
-        Equipe
+        <span class="bt">Equipe</span>
       </button>
       <label class="btn" for="file" title="Abrir um arquivo do aparelho">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
-        Arquivo
+        <span class="bt">Arquivo</span>
       </label>
       <button class="btn" id="expBtn" title="Dashboard e relatórios em PDF ou Word">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg>
-        <span id="expLbl">Exportar</span>
+        <span id="expLbl" class="bt">Exportar</span>
       </button>
       <button class="btn primary" id="driveBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
-        <span id="driveLbl">Atualizar do Drive</span>
+        <span id="driveLbl" class="bt">Atualizar do Drive</span>
       </button>
       <input type="file" id="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
     </div>
@@ -972,6 +998,7 @@ function counts(list, fn){ const m = new Map(); list.forEach(t => fn(t).forEach(
 
 function render(){
   if(document.body.dataset.tab === "crono") setTimeout(renderCrono, 0);
+  setTimeout(() => window.hdrChipSafe && window.hdrChipSafe(), 0);
   const r = range();
   $("#planName").textContent = DATA.plan;
   const sync = DATA.syncedAt ? ` · atualizado ${new Date(DATA.syncedAt).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}${DATA.source?` (${DATA.source})`:""}` : "";
@@ -1169,7 +1196,7 @@ function setTab(t){
   setTimeout(setHdr, 0);
   document.body.dataset.tab = t; try { localStorage.setItem(LS_TAB, t); } catch(e){}
   document.querySelectorAll(".apptabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === t));
-  $("#expLbl").textContent = t === "crono" ? "Exportar cronograma" : "Exportar";
+  $("#expLbl").textContent = t === "crono" ? "Exportar cronograma" : "Exportar"; window.hdrChipSafe && window.hdrChipSafe();
   $("#expBtn").title = t === "crono" ? "Cronograma em PDF, A4 paisagem" : "Dashboard e relatórios em PDF ou Word";
   $("#crono").hidden = t !== "crono"; $("#atas").hidden = t !== "atas"; $("#links").hidden = t !== "links";
   document.querySelector(".cr-pop")?.remove();
@@ -1199,7 +1226,7 @@ function renderCrono(){
   const [s, e, label] = crRange();
   document.querySelectorAll("#crView button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === CR.view));
   document.querySelectorAll("#crGrp button").forEach(b => b.setAttribute("aria-pressed", b.dataset.g === CR.grp));
-  $("#crLbl").textContent = label;
+  $("#crLbl").textContent = label; window.hdrChipSafe && window.hdrChipSafe();
   const allB = allBuckets(); const exOn = CR.ex.filter(b => allB.includes(b));
   $("#crBkb").textContent = exOn.length ? `Buckets ${allB.length - exOn.length} de ${allB.length}` : "Todos os buckets";
   $("#crBkb").classList.toggle("part", !!exOn.length);
@@ -1612,6 +1639,31 @@ $("#lkForm").addEventListener("click", ev => {
     LK.deleted.push(e.id); LK.list = LK.list.filter(x => x.id !== e.id); lkSel = LK.list[0]?.id || null; lkConfirmDel = false; saveLinks(); renderLinks(); toast("Entrega apagada do tablet."); return; }
 });
 window.renderLinks = renderLinks;
+
+
+/* ---------- minimizar o cabeçalho (só visual; exportações não mudam) ---------- */
+const LS_HDR = "sic-cabecalho-min";
+window.hdrChipSafe = () => { try { hdrChip(); } catch(e){} };
+let hdrPref = false; try { hdrPref = localStorage.getItem(LS_HDR) === "1"; } catch(e){}
+function applyHdr(){
+  const on = hdrPref;
+  document.body.classList.toggle("cab-min", on);
+  $("#hdrMin").setAttribute("aria-expanded", !on);
+  $("#hdrMin").title = on ? "Mostrar o cabeçalho completo" : "Minimizar o cabeçalho";
+  $("#hdrMin .ic").textContent = on ? "▾" : "▴"; $("#hdrMin .bt").textContent = on ? "Abrir" : "Minimizar";
+  hdrChip(); setTimeout(setHdr, 0);
+}
+function hdrChip(){
+  const c = $("#hdrChip"), on = document.body.classList.contains("cab-min"), tab = document.body.dataset.tab;
+  let txt = "";
+  if(on && tab === "painel"){
+    const r = range(); const f = [rangeLabel(r), ui.person && dispName(ui.person), ui.status && stLabel(), ui.project, ui.exBuckets.length && `${allBuckets().length - ui.exBuckets.length} buckets`, ui.q && `“${ui.q}”`].filter(Boolean);
+    txt = (f.length > 1 ? "Filtros: " : "") + f.join(" · ");
+  } else if(on && tab === "crono") txt = crRange()[2] + (CR.ex.length ? ` · ${allBuckets().length - CR.ex.filter(b => allBuckets().includes(b)).length} buckets` : "");
+  c.hidden = !txt; c.textContent = txt; c.title = txt ? "Toque para abrir o cabeçalho" : "";
+}
+$("#hdrMin").addEventListener("click", () => { hdrPref = !hdrPref; try { localStorage.setItem(LS_HDR, hdrPref ? "1" : "0"); } catch(e){} applyHdr(); });
+$("#hdrChip").addEventListener("click", () => { hdrPref = false; try { localStorage.setItem(LS_HDR, "0"); } catch(e){} applyHdr(); window.scrollTo({top:0, behavior:"smooth"}); });
 
 /* ---------- Exportar: dashboard e relatórios ---------- */
 const R = window.SIC_RELATORIOS, LS_REP = "sic-relatorios";
@@ -2074,6 +2126,7 @@ if("serviceWorker" in navigator && location.protocol === "https:"){
 
 render();
 { let t0 = "painel"; try { t0 = localStorage.getItem(LS_TAB) || "painel"; } catch(e){} setTab(["painel","crono","atas","links"].includes(t0) ? t0 : "painel"); }
+applyHdr();
 })();
 </script>
 
